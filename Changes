@@ -1,0 +1,7 @@
+Revision history for CGI-Application-Plugin-PageLookup
+
+0.01    8-8-2009
+        First version, released on an unsuspecting world.
+
+0.02 	17-8-2009
+	Changed paramId to valueId;
