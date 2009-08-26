@@ -20,23 +20,38 @@ CGI::Application::Plugin::PageLookup - Installs a database backend into Titanium
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
+=head1 DESCRIPTION
+
+See L<CGI::Application::PageLookup> for more information.
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+    package MyCGIApp base qw(CGI::Application);
+    use CGI::Application::Plugin::PageLookup qw(model model_load_tmpl);
+    use CGI::Application::PageLookup;
 
-Perhaps a little code snippet.
+    sub cgiapp_init {
+        my $self = shift;
+        # use the same args as DBI->connect();
+        $self->dbh_config(......); # whatever arguments are appropriate
 
-    use CGI::Application::Plugin::PageLookup;
+	$self->model(CGI::Application::PageLookup->new(dbh=>sub {return $self->dbh()}));
 
-    my $foo = CGI::Application::Plugin::PageLookup->new();
-    ...
+    }
+
+    sub my_generic_runmode {
+	my $self = shift;
+	my $page_id = $self->param('PAGE_ID') or return $self->main_runmode();
+	my $template_obj = $self->model_load_tmpl($page_id) or return $self->notfound($page_id);
+	return $template_obj->output;
+    }
+
 
 =head1 EXPORT_OK
 
@@ -47,7 +62,8 @@ model_load_tmpl
 
 =head2 model
 
-This returns cached model object. If there is no cached model it is taken from the second argument.
+This returns cached model object. If there is no cached model it is taken from the second argument
+which is then cached. Therefore this function is used to set the model.
 
 =cut
 
@@ -63,13 +79,16 @@ sub model {
 =head2 model_load_tmpl
 
     This takes a page id, lookups up the template and parameters and returns an enriched template. 
+If there is no matching pageid in the database then the function will return an undef. It would do this
+before attempting to call load_tmpl.
 
 =cut
 
 sub model_load_tmpl {
     my $self = shift;
     my $modelid = shift;
-    my ($template, $params) = $self->model()->lookup($modelid) or return undef;	
+    my ($template, $params) = $self->model()->lookup($modelid);
+    return undef unless ref($params) eq "HASH";
     my $templ_obj = $self->load_tmpl($template);
 
     # This function is defined in CGI::Application::Plugin::PageLookup::SiteStructure;

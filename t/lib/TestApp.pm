@@ -19,7 +19,8 @@ sub setup {
 		'test1' => \&test1,
 		'test2'=> \&test2,
 		'test3'=>\&test3,
-		'test4'=>\&test4
+		'test4'=>\&test4,
+		'test0'=>\&test0
 		);
 
 }
@@ -51,6 +52,12 @@ sub cgiapp_init {
         }
 ));
 }
+
+sub test0 {
+	my $self = shift;
+	return $self->model_load_tmpl('test0') ? "can find" : "cannot find";
+}
+
 
 sub test1 {
         my $self = shift;
