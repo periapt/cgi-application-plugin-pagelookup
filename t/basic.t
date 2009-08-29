@@ -1,14 +1,13 @@
-#!perl -T
+#!perl  
 
 use strict;
-use Test::More tests => 12;
+use warnings;
+use Test::More tests => 11;
 use Test::Differences;
 use lib qw(t/lib);
-#use lib qw(../CGI-Application-PageLookup/lib);
 
 BEGIN {
 	use_ok( 'HTML::Template' );
-	use_ok( 'CGI::Application::PageLookup' );
 	use_ok( 'CGI::Application::Plugin::PageLookup' );
 }
 
@@ -17,13 +16,12 @@ unlink "t/dbfile";
 
 
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, template, enrichment, home, path)");
-$dbh->do("create table cgiapp_slogans (pageId, rank, A, B)");
-$dbh->do("insert into  cgiapp_pages (pageId, template, enrichment, home, path) values('test1', 't/templ/test.tmpl', null, 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, template, enrichment, home, path) values('test2', 't/templ/test.tmpl', null, 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_pages (pageId, template, enrichment, home, path) values('test3', 't/templ/testP.tmpl', 'TESTLOOP', 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_slogans (pageId, rank, A, B) values('test3', 1, 'I think', 'I am')");
-$dbh->do("insert into  cgiapp_slogans (pageId, rank, A, B) values('test3', 2, 'I eat', 'I am happy')");
+$dbh->do("create table cgiapp_pages (pageId, lang, template, home, path)");
+$dbh->do("create table cgiapp_lang (lang)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('test1', 'en', 't/templ/test.tmpl', 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('test2', 'en', 't/templ/test.tmpl', 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('en/404', 'en', 't/templ/testN.tmpl', 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_lang (lang) values('en')");
 
 use CGI;
 use TestApp;
@@ -36,6 +34,7 @@ sub response_like {
         local $ENV{CGI_APP_RETURN_ONLY} = 1;
         my $output = $app->run;
         my ($header, $body) = split /\r\n\r\n/m, $output;
+        $header =~ s/\r\n/|/g;
         like($header, $header_re, "$comment (header match)");
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
@@ -46,14 +45,14 @@ sub response_like {
 
         response_like(
                 $app,
-                qr{^Content-Type: text/html},
+                qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
                 "Hello World: basic_test",
                 'TestApp, blank query',
         );
 }
 
 {
-my $html1=<<EOS
+my $html=<<EOS
 <html>
   <head><title>Test Template</title>
   <body>
@@ -66,17 +65,17 @@ EOS
 ;
 
         my $app = TestApp->new();
-        $app->query(CGI->new({'rm' => 'test1'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'test1'}));
         response_like(
                 $app,
-                qr{^Content-Type: text/html},
-                $html1,
+                qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
                 'TestApp, test1'
         );
 }
 
 {
-my $html1=<<EOS
+my $html=<<EOS
 <html>
   <head><title>Test Template</title>
   <body>
@@ -89,17 +88,17 @@ EOS
 ;
 
         my $app = TestApp->new();
-        $app->query(CGI->new({'rm' => 'test2'}));
+        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'test2'}));
         response_like(
                 $app,
-                qr{^Content-Type: text/html},
-                $html1,
+                qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
                 'TestApp, test2'
         );
 }
 
 {
-my $html1=<<EOS
+my $html=<<EOS
 <html>
   <head><title>Test Template</title>
   <body>
@@ -107,22 +106,19 @@ my $html1=<<EOS
   <p>
   My Path is set to PATH1
 
-	I think, therefore I am.
-
-	I eat, therefore I am happy.
-
+  Did not find the page: test3
   </body>
   </html>
 EOS
 ;
 
         my $app = TestApp->new();
-        $app->query(CGI->new({'rm' => 'test3'}));
+        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'test3'}));
         response_like(
                 $app,
-                qr{^Content-Type: text/html},
-                $html1,
-                'TestApp, test3'
+                qr{^Status: 404\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
+                'TestApp, notfound'
         );
 }
 

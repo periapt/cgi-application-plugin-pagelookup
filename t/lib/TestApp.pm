@@ -1,25 +1,21 @@
 package TestApp;
 
 use strict;
-
+use warnings;
 
 use CGI::Application;
 @TestApp::ISA = qw(CGI::Application);
 use CGI::Application::Plugin::DBH (qw/dbh_config dbh/);
-use CGI::Application::Plugin::PageLookup (qw/model model_load_tmpl/);
-use CGI::Application::PageLookup;
-
+use CGI::Application::Plugin::PageLookup (qw/:all/);
 
 sub setup {
         my $self = shift;
 
         $self->start_mode('basic_test');
         $self->run_modes(
-		'basic_test'  => \&basic_test,
-		'test1' => \&test1,
-		'test2'=> \&test2,
-		'test3'=>\&test3,
-		'test4'=>\&test4,
+		'basic_test'  => 'basic_test',
+		'xml_sitemap' => 'xml_sitemap_rm',
+		'pagelookup_rm'=> 'pagelookup_rm',
 		'test0'=>\&test0
 		);
 
@@ -35,48 +31,28 @@ sub cgiapp_init {
 	# use the same args as DBI->connect();
 	$self->dbh_config("dbi:SQLite:t/dbfile","","");
 
-	$self->model(CGI::Application::PageLookup->new(dbh=>sub {return $self->dbh()},callbacks=>
-        {
-                TESTLOOP=> sub {
-                        my ($hash_ref, $pageid, $dbh) = @_;
-                        my $sql = "select A, B from cgiapp_slogans where pageid = '$pageid' order by rank asc";
-                        my $sth = $dbh->prepare($sql) or die $dbh->errstr;
-                        $sth->execute() or  die $dbh->errstr;
-                        my @rows;
-                        while(my $r = $sth->fetchrow_hashref) {
-                                push @rows, $r;
-                        }
-                        die $dbh->errstr if $dbh->err;
-                        $hash_ref->{TESTLOOP} = \@rows;
-                }
-        }
-));
+	my %params = (remove=>['lang', 'template', 'pageId']);
+	$params{prefix} = $self->param('prefix') if $self->param('prefix');
+	$params{remove} = $self->param('remove') if $self->param('remove');
+	if ($self->param('notfound_stuff')) {
+		$params{status_404}='notfound' ;
+		$params{msg_param}='error_param';
+	}
+	$params{xml_sitemap_base_url} = $self->param('xml_sitemap_base_url') if $self->param('xml_sitemap_base_url');
+	if ($self->param('objects')) {
+		use HTML::Template::Pluggable;
+		use HTML::Template::Plugin::Dot;
+		$self->html_tmpl_class('HTML::Template::Pluggable');
+		$params{objects} = $self->param('objects');
+	}
+
+	$self->pagelookup_config(%params);
 }
 
-sub test0 {
+sub create_smart_object {
 	my $self = shift;
-	return $self->model_load_tmpl('test0') ? "can find" : "cannot find";
-}
-
-
-sub test1 {
-        my $self = shift;
-	return $self->model_load_tmpl('test1')->output;
-}
-
-sub test2 {
-        my $self = shift;
-	return $self->model_load_tmpl('test2')->output;
-}
-
-sub test3 {
-        my $self = shift;
-	return $self->model_load_tmpl('test3')->output;
-}
-
-sub test4 {
-        my $self = shift;
-	return $self->model_load_tmpl('test4')->output;
+        use SmartObjectTest;
+        return SmartObjectTest->new($self, shift, shift, shift);
 }
 
 
