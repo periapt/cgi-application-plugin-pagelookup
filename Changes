@@ -8,6 +8,7 @@ Revision history for CGI-Application-Plugin-PageLookup
 0.03	24-08-2009
 	Fixed docs and handled notfound case
 
-1.0	28-08-2009
-	Total rethink in order
+1.0	29-08-2009
+	Total rethink
+
 
