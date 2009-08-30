@@ -2,11 +2,10 @@ package CGI::Application::Plugin::PageLookup;
 
 use warnings;
 use strict;
-use vars qw($VERSION @ISA  @EXPORT_OK %EXPORT_TAGS);
 use CGI::Application::Plugin::Forward;
 use Carp;
-require Exporter;
-@ISA = qw(Exporter);
+use base qw(Exporter);
+use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
@@ -301,10 +300,9 @@ This is the url for the whole site. It is mandatory to set this if you want XML 
 
 sub pagelookup_config {
    my $self = shift;
+   my %args = @_;
 
    croak "Calling pagelookup_config after the pagelookup has already been configured" if defined $self->{__cgi_application_plugin_pagelookup};
-
-   my %args = @_;
 
    $args{prefix} = "cgiapp_" unless exists $args{prefix};
    $args{handle_notfound} = 1 unless exists $args{handle_notfound};
@@ -320,7 +318,7 @@ sub pagelookup_config {
    $self->{__cgi_application_plugin_pagelookup} = \%args;
 
    $self->pagelookup_set_charset();
-
+   return;
 }
 
 =head2 pagelookup_get_config 
@@ -345,6 +343,7 @@ sub pagelookup_set_charset {
    my $self = shift;
    my %args = $self->pagelookup_get_config(@_);
    $self->header_props(-encoding=>$args{charset},-charset=>$args{charset});
+   return;
 }
 
 =head2 pagelookup_prefix
@@ -394,13 +393,13 @@ sub pagelookup {
    my @inargs = @_;
    my %args = $self->pagelookup_get_config(@inargs);
    my $dbh = $self->dbh();
-   my $sth = $dbh->prepare($self->pagelookup_sql($page_id, @inargs)) || die $dbh->errstr;
-   $sth->execute || die $dbh->errstr;
+   my $sth = $dbh->prepare($self->pagelookup_sql($page_id, @inargs)) || croak $dbh->errstr;
+   $sth->execute || croak $dbh->errstr;
    my $hash_ref = $sth->fetchrow_hashref;
 
    # check if page was found
    unless ($hash_ref) {
-	die $dbh->errstr if $dbh->err;
+	croak $dbh->errstr if $dbh->err;
         $sth->finish;
 
 	if ($args{handle_notfound}) {
@@ -476,10 +475,10 @@ sub xml_sitemap_rm {
    my $dbh = $self->dbh();
    my $base_url = $self->xml_sitemap_base_url();
    my $sql = $self->xml_sitemap_sql();
-   my $sth = $dbh->prepare($sql) || die $dbh->errstr;
-   $sth->execute or  die $dbh->errstr;
+   my $sth = $dbh->prepare($sql) || croak $dbh->errstr;
+   $sth->execute or  croak $dbh->errstr;
    my $hash_ref = $sth->fetchall_arrayref({});
-   my $template =<<EOS
+   my $template =<<"EOS"
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <TMPL_LOOP NAME="urls">
@@ -530,7 +529,7 @@ sub pagelookup_notfound {
 
    my $template = $self->pagelookup($new_page_id, handle_notfound=>0) || croak "failed to construct 'not found' page";
    $template->param( $self->pagelookup_msg_param(@inargs) => $page_id);
-   $self->header_add( -status => 404 );	
+   $self->header_add( -status => 404 );
    return $template;
  
 }
@@ -547,6 +546,7 @@ sub pagelookup_set_expiry {
    my $changefreq = $hash_ref->{changefreq} or return;
    my %mapping = (always=>"-1d", hourly=>"+1h", daily=>"+1d", weekly=>"+7d", monthly=>"+1M", yearly=>"+1y", never=>"+3y");
    $self->header_add(-expires=>$mapping{$changefreq});
+   return;
 }
 
 =head2 pagelookup_default_lang 
