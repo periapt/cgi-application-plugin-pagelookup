@@ -1,0 +1,2 @@
+severity = 3
+exclude = Subroutines::ProhibitExplicitReturnUndef Subroutines::RequireArgUnpacking ClassHierarchies::ProhibitAutoloading RegularExpressions::RequireExtendedFormatting
