@@ -12,6 +12,7 @@ require Exporter;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT_OK = qw(
     pagelookup_config
+    pagelookup_get_config
     pagelookup_set_charset
     pagelookup_prefix
     pagelookup_sql
@@ -180,6 +181,7 @@ collation   |varchar(2)                                                         
 These functions can be optionally imported into the CGI::Application or related namespace.
 
     pagelookup_config
+    pagelookup_get_config
     pagelookup_set_charset
     pagelookup_prefix
     pagelookup_sql
@@ -321,6 +323,18 @@ sub pagelookup_config {
 
 }
 
+=head2 pagelookup_get_config 
+
+Returns config including any overrides passed in as aeguments.
+
+=cut
+
+sub pagelookup_get_config {
+   my $self = shift;
+   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   return %args;
+}
+
 =head2 pagelookup_set_charset
 
 This function sets the character set based upon the config.
@@ -329,7 +343,7 @@ This function sets the character set based upon the config.
 
 sub pagelookup_set_charset {
    my $self = shift;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   my %args = $self->pagelookup_get_config(@_);
    $self->header_props(-encoding=>$args{charset},-charset=>$args{charset});
 }
 
@@ -342,7 +356,7 @@ The prefix can of course be overridden.
 
 sub pagelookup_prefix {
    my $self = shift;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   my %args = $self->pagelookup_get_config(@_);
    return $args{prefix};
 }
 
@@ -378,7 +392,7 @@ sub pagelookup {
    my $self = shift;
    my $page_id = shift;
    my @inargs = @_;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @inargs);
+   my %args = $self->pagelookup_get_config(@inargs);
    my $dbh = $self->dbh();
    my $sth = $dbh->prepare($self->pagelookup_sql($page_id, @inargs)) || die $dbh->errstr;
    $sth->execute || die $dbh->errstr;
@@ -503,7 +517,7 @@ sub pagelookup_notfound {
    my $self = shift;
    my $page_id = shift;
    my @inargs = @_;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @inargs);
+   my %args = $self->pagelookup_get_config(@inargs);
 
    # Best guess at language
    my $lang = $self->pagelookup_default_lang(@inargs);
@@ -543,7 +557,7 @@ This returns the default language code.
 
 sub pagelookup_default_lang {
    my $self = shift;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   my %args = $self->pagelookup_get_config(@_);
    return $args{default_lang};
 }
 
@@ -555,7 +569,7 @@ This returns the core id used by 404 pages.
 
 sub pagelookup_404 {
    my $self = shift;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   my %args = $self->pagelookup_get_config(@_);
    return $args{status_404};
 }
 
@@ -567,7 +581,7 @@ This returns the parameter that pagelookup uses for inserting error messages.
 
 sub pagelookup_msg_param {
    my $self = shift;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   my %args = $self->pagelookup_get_config(@_);
    return $args{msg_param};
 }
 
@@ -591,7 +605,7 @@ This returns the base url used in XML sitemaps.
 
 sub xml_sitemap_base_url {
    my $self = shift;
-   my %args = (%{$self->{__cgi_application_plugin_pagelookup}}, @_);
+   my %args = $self->pagelookup_get_config(@_);
    return $args{xml_sitemap_base_url} || croak "no xml sitemp base url set";
 }
 

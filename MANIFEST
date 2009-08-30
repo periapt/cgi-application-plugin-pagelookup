@@ -18,5 +18,8 @@ t/templ/testNLO.tmpl
 Changes
 MANIFEST
 lib/CGI/Application/Plugin/PageLookup.pm
+lib/CGI/Application/Plugin/PageLookup/Value.pm
+lib/CGI/Application/Plugin/PageLookup/Loop.pm
+lib/CGI/Application/Plugin/PageLookup/Href.pm
 README
 Makefile.PL
