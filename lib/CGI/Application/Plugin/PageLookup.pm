@@ -159,9 +159,9 @@ by default they are deleted just before being sent to the template.
 Table: cgiapp_pages
 Field       |Type                                                               |Null|Key |Default|Extra|
 --------------------------------------------------------------------------------------------------------
-pageId      |varchar(255)                                                       |NO  |PRI |NULL   |     |
-lang        |varchar(2)								|NO  |    |NULL   |     |
-internalId  |unsigned numeric(10,0)						|NO  |    |NULL   |     |
+pageId      |varchar(255)                                                       |NO  |UNI |NULL   |     |
+lang        |varchar(2)								|NO  |PRI |NULL   |     |
+internalId  |unsigned numeric(10,0)						|NO  |PRI |NULL   |     |
 template    |varchar(20)                                                        |NO  |    |NULL   |     |
 lastmod     |date                                                               |NO  |    |NULL   |     |
 changefreq  |enum('always','hourly','daily','weekly','monthly','yearly','never')|NO  |    |NULL   |     |

@@ -15,32 +15,32 @@ unlink "t/dbfile";
 
 
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path)");
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path)");
 $dbh->do("create table cgiapp_lang (lang, collation)");
-$dbh->do("create table cgiapp_values (lang, pageId, param, value)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path) values('en/test1', 'en', 't/templ/testLO.tmpl', '2009-8-11', 'daily', '0.8', 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path) values('en/test2', 'en', 't/templ/testLO.tmpl', '2007-8-11', 'yearly', '0.7', 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path) values('de/test1', 'de', 't/templ/testLO.tmpl', '2009-8-11', 'daily', '0.8', 'HEIMAT', 'Stra&szlig;e')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path) values('de/test2', 'de', 't/templ/testLO.tmpl', '2007-8-11', 'yearly', '0.7', 'HEIMAT1', 'Stra&szlig;e1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path) values('en/notfound', 'en', 't/templ/testNLO.tmpl', '2007-8-11', 'never', NULL, 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, lastmod, changefreq, priority, home, path) values('de/notfound', 'de', 't/templ/testNLO.tmpl', '2007-8-11', 'never', NULL, 'HEIMAT', 'Stra&szlig;e3')");
+$dbh->do("create table cgiapp_values (lang, internalId, param, value)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path) values('en/test1', 'en', 0, 't/templ/testLO.tmpl', '2009-8-11', 'daily', '0.8', 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path) values('en/test2', 'en', 1, 't/templ/testLO.tmpl', '2007-8-11', 'yearly', '0.7', 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path) values('de/test1', 'de', 0, 't/templ/testLO.tmpl', '2009-8-11', 'daily', '0.8', 'HEIMAT', 'Stra&szlig;e')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path) values('de/test2', 'de', 1, 't/templ/testLO.tmpl', '2007-8-11', 'yearly', '0.7', 'HEIMAT1', 'Stra&szlig;e1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path) values('en/notfound', 'en', 2, 't/templ/testNLO.tmpl', '2007-8-11', 'never', NULL, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, lastmod, changefreq, priority, home, path) values('de/notfound', 'de', 2, 't/templ/testNLO.tmpl', '2007-8-11', 'never', NULL, 'HEIMAT', 'Stra&szlig;e3')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('en',null, 'hop', 'Bunnies')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('en',null, 'skip', 'Happy')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('en',null, 'jump', 'Sky')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('de',null, 'hop', 'Hasen')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('de',null, 'skip', 'Gl&uuml;cklich')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('de',null, 'jump', 'Himmel')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('de','de/test2', 'jump', 'Wolken')");
-$dbh->do("insert into  cgiapp_values (lang, pageId, param, value) values('de','de/notfound', 'jump', 'Blau')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('en',null, 'hop', 'Bunnies')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('en',null, 'skip', 'Happy')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('en',null, 'jump', 'Sky')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',null, 'hop', 'Hasen')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',null, 'skip', 'Gl&uuml;cklich')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',null, 'jump', 'Himmel')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',1, 'jump', 'Wolken')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',2, 'jump', 'Blau')");
 
 use CGI;
 use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
 use CGI::Application::Plugin::PageLookup::Value;
-my $params = {remove=>['template','pageId','priority','lastmod','changefreq'],notfound_stuff=>1,xml_sitemap_base_url=>'http://xml/', 
+my $params = {remove=>['template','pageId','internalId','priority','lastmod','changefreq'],notfound_stuff=>1,xml_sitemap_base_url=>'http://xml/', 
 	objects=>{
 		test1=>'CGI::Application::Plugin::PageLookup::Value',
 		test2=>'CGI::Application::Plugin::PageLookup::Value',
