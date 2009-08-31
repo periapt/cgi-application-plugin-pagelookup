@@ -433,8 +433,8 @@ sub pagelookup {
 		croak "Could not create smart object: $okey: $@" if $@;
 	}
 
-	$hash_ref->{$okey} = $object if $object;
-	
+        $hash_ref->{$okey} = $object if $object;
+
    }
 
    # remove unwanted parameters
@@ -531,7 +531,7 @@ sub pagelookup_notfound {
    $template->param( $self->pagelookup_msg_param(@inargs) => $page_id);
    $self->header_add( -status => 404 );
    return $template;
- 
+
 }
 
 =head2 pagelookup_set_expiry
@@ -544,7 +544,7 @@ sub pagelookup_set_expiry {
    my $self = shift;
    my $hash_ref = shift;
    my $changefreq = $hash_ref->{changefreq} or return;
-   my %mapping = (always=>"-1d", hourly=>"+1h", daily=>"+1d", weekly=>"+7d", monthly=>"+1M", yearly=>"+1y", never=>"+3y");
+   my %mapping = (always=>'-1d', hourly=>'+1h', daily=>'+1d', weekly=>'+7d', monthly=>'+1M', yearly=>'+1y', never=>'+3y');
    $self->header_add(-expires=>$mapping{$changefreq});
    return;
 }

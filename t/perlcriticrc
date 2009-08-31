@@ -1,2 +1,2 @@
-severity = 3
-exclude = Subroutines::ProhibitExplicitReturnUndef Subroutines::RequireArgUnpacking ClassHierarchies::ProhibitAutoloading RegularExpressions::RequireExtendedFormatting
+severity = 1
+exclude = Subroutines::ProhibitExplicitReturnUndef Subroutines::RequireArgUnpacking ClassHierarchies::ProhibitAutoloading RegularExpressions Miscellanea::RequireRcsKeywords Documentation::RequirePodAtEnd ControlStructures::ProhibitUnlessBlocks ControlStructures::ProhibitNegativeExpressionsInUnlessAndUntilConditions ControlStructures::ProhibitPostfixControls Documentation::RequirePodSections References::ProhibitDoubleSigils Variables::ProhibitPunctuationVars ValuesAndExpressions::ProhibitInterpolationOfLiterals
