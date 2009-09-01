@@ -57,7 +57,17 @@ You must register the "values" parameter as a CGI::Application::Plugin::PageLook
     ...
 
 After that all that remains is to populate the cgiapp_values table with the appropriate values. Notice that the code does
-not need to know what comes after the dot in the templates.
+not need to know what comes after the dot in the templates. So if you want to set "values.hope" to "disappointment" in all English
+pages you would run
+
+	INSERT (lang, param, value) VALUES ('en', 'hope', 'disappointment')
+
+On the other hand if you wanted set "values.hope" to "a glimmer of light" on page 7 but "disappointment" everywhere else, then you would
+run
+
+	INSERT (lang, param, value) VALUES ('en', 'hope', 'disappointment')
+	INSERT (lang, internalId, param, value) VALUES ('en', 7, 'hope', 'a glimmer of light')
+	
 
 =head1 DATABASE
 
