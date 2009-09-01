@@ -1,11 +1,11 @@
-package CGI::Application::Plugin::PageLookup::Value;
+package CGI::Application::Plugin::PageLookup::Loop;
 
 use warnings;
 use strict;
 
 =head1 NAME
 
-CGI::Application::Plugin::PageLookup::Value - Manage values scattered across a website
+CGI::Application::Plugin::PageLookup::Loop - Manage list structures in a website
 
 =head1 VERSION
 
@@ -18,19 +18,19 @@ our $AUTOLOAD;
 
 =head1 DESCRIPTION
 
-This module allows the management of template variable instantiation across a website.
-You can specialize a default value for parameter (without requiring it to be used on every page)
-and override that value for specific pages. Or you can merely set the value for individual pages.
-This depends on L<CGI::Application::Plugin::PageLookup>. For loops see L<CGI::Application::Plugin::PageLookup::Loop>.
+This module interprets suitably registered dot notation template variables
+by looking up the part of the variable after the dot in a table. If possible
+it will match on on the exact internal page id and language, failing that it will match on 
+on language alone.
 
 =head1 SYNOPSIS
 
 In the template you can do things like <TMPL_VAR NAME="values.hope">, <TMPL_VAR NAME="values.faith"> and <TMPL_VAR NAME="values.charity">.
-You must register the "values" parameter as a CGI::Application::Plugin::PageLookup::Value object as follows:
+You must register the "values" parameter as a CGI::Application::Plugin::PageLookup::Loop object as follows:
 
     use CGI::Application;
     use CGI::Application::Plugin::PageLookup qw(:all);
-    use CGI::Application::Plugin::PageLookup::Value;
+    use CGI::Application::Plugin::PageLookup::Loop;
     use HTML::Template::Pluggable;
     use HTML::Template::Plugin::Dot;
 
@@ -48,7 +48,7 @@ You must register the "values" parameter as a CGI::Application::Plugin::PageLook
                 objects =>
                 (
                         # Register the 'values' parameter
-                        values => 'CGI::Application::Plugin::PageLookup::Value,
+                        values => 'CGI::Application::Plugin::PageLookup::Loop,
 		}
 	);
     }
@@ -60,28 +60,35 @@ After that all that remains is to populate the cgiapp_values table with the appr
 not need to know what comes after the dot in the templates. So if you want to set "values.hope" to "disappointment" in all English
 pages you would run
 
-	INSERT (lang, param, value) INTO cgiapp_values VALUES ('en', 'hope', 'disappointment')
+	INSERT (lang, param, value) VALUES ('en', 'hope', 'disappointment')
 
 On the other hand if you wanted set "values.hope" to "a glimmer of light" on page 7 but "disappointment" everywhere else, then you would
 run
 
-	INSERT (lang, param, value) INTO cgiapp_values VALUES ('en', 'hope', 'disappointment')
-	INSERT (lang, internalId, param, value) INTO cgiapp_values VALUES ('en', 7, 'hope', 'a glimmer of light')
+	INSERT (lang, param, value) VALUES ('en', 'hope', 'disappointment')
+	INSERT (lang, internalId, param, value) VALUES ('en', 7, 'hope', 'a glimmer of light')
 	
 
 =head1 DATABASE
 
-This module depends on only one extra table: cgiapp_values. The lang and internalId columns join against
+This module depends on only one extra table: cgiapp_loops. The lang and internalId columns join against
 the cgiapp_table. However the internalId column can null, making the parameter available to all pages
-in the same language. The lang, internalId and param columns form the key of the table.
+in the same language. The key is formed by all of the columns except for the value.
 
 Table: cgiapp_values
 Field       |Type                                                               |Null|Key |Default|Extra|
 --------------------------------------------------------------------------------------------------------
 lang        |varchar(2)                                                         |NO  |    |NULL   |     |
 internalId  |unsigned numeric(10,0)                                             |YES |    |NULL   |     |
+loopName    |varchar(20)							|NO  |    |NULL	  |     |
+lineage	    |varchar(255)							|NO  |    |       |     |
+rank	    |unsigned numeric(2,0)						|NO  |	  |0      |     |
 param       |varchar(20)                                                        |NO  |    |NULL   |     |
 value       |text								|NO  |    |NULL   |     |
+
+The loopName is the parameter name of the TMPL_LOOP structure. The rank indicates which iteration of the loop
+this row is instantiating. The lineage is a comma separated list of ranks so that we know what part of a nested
+loop structure this row instantiates. For a top-level parameter this will always be the empty string.
 
 =head1 FUNCTIONS
 
@@ -183,7 +190,7 @@ AUTOLOAD is quite a fraught subject. There is probably no perfect solution. See 
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc CGI::Application::Plugin::PageLookup::Value
+    perldoc CGI::Application::Plugin::PageLookup::Loop
 
 
 You can also look for information at:
@@ -225,4 +232,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of CGI::Application::Plugin::PageLookup::Value
+1; # End of CGI::Application::Plugin::PageLookup::Loop
