@@ -18,15 +18,45 @@ our $AUTOLOAD;
 
 =head1 DESCRIPTION
 
-This module interprets suitably registered dot notation template variables
-by looking up the part of the variable after the dot in a table. If possible
-it will match on on the exact internal page id and language, failing that it will match on 
-on language alone.
+This module manages the instantiation of list style template parameters across a website;
+for example TMPL_LOOP in L<HTML::Template>, though one must use L<HTML::Template::Pluggable> for it to
+work. For example a menu is typically implemented in HTML as <ul>....</ul>. Using this module
+the menu can be instantiated from the database and the same data used to instantiate a human-readable
+sitemap page. On the other hand the staff page will have list data that is only required on that page.
+This module depends on L<CGI::Application::Plugin::PageLookup::Loop>.
 
 =head1 SYNOPSIS
 
-In the template you can do things like <TMPL_VAR NAME="values.hope">, <TMPL_VAR NAME="values.faith"> and <TMPL_VAR NAME="values.charity">.
-You must register the "values" parameter as a CGI::Application::Plugin::PageLookup::Loop object as follows:
+In the template you might define a menu as follows (with some CSS and javascript to make it look nice):
+
+    <ul>
+    <TMPL_LOOP NAME="loop.menu">
+	<li>
+		<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="href1">"><TMPL_VAR NAME="atitle1"></a>
+		<TMPL_IF NAME="submenu1">
+		<ul>
+		<TMPL_LOOP NAME="submenu1">
+			<li>
+				<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="href2">"><TMPL_VAR NAME="atitle2"></a>
+				<TMPL_IF NAME="submenu2">
+				<ul>
+				<TMPL_LOOP NAME="submenu2">
+				<li>
+					<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="href3">"><TMPL_VAR NAME="atitle3"></a>
+				</li>
+				</TMPL_LOOP>
+				</ul>
+				</TMPL_IF>
+			</li>
+		</TMPL_LOOP>
+		</ul>	
+		</TMPL_IF>
+	</li>
+    </TMPL_LOOP>
+    </ul>
+
+and the intention is that this should be the same on all English pages, the same on all Vietnamese pages etc etc.
+You must register the "loop" parameter as a CGI::Application::Plugin::PageLookup::Loop object as follows:
 
     use CGI::Application;
     use CGI::Application::Plugin::PageLookup qw(:all);
@@ -48,7 +78,7 @@ You must register the "values" parameter as a CGI::Application::Plugin::PageLook
                 objects =>
                 (
                         # Register the 'values' parameter
-                        values => 'CGI::Application::Plugin::PageLookup::Loop,
+                        loop => 'CGI::Application::Plugin::PageLookup::Loop,
 		}
 	);
     }
@@ -56,7 +86,7 @@ You must register the "values" parameter as a CGI::Application::Plugin::PageLook
 
     ...
 
-After that all that remains is to populate the cgiapp_values table with the appropriate values. Notice that the code does
+The astute reader will notice that the above will only work if you set the 'global_vars' to true. After that all that remains is to populate the cgiapp_values table with the appropriate values. Notice that the code does
 not need to know what comes after the dot in the templates. So if you want to set "values.hope" to "disappointment" in all English
 pages you would run
 

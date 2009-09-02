@@ -19,7 +19,7 @@ our $AUTOLOAD;
 =head1 DESCRIPTION
 
 This module allows the management of template variable instantiation across a website.
-You can specialize a default value for parameter (without requiring it to be used on every page)
+You can specialize a default value for a parameter (without requiring it to be used on every page)
 and override that value for specific pages. Or you can merely set the value for individual pages.
 This depends on L<CGI::Application::Plugin::PageLookup>. For loops see L<CGI::Application::Plugin::PageLookup::Loop>.
 
