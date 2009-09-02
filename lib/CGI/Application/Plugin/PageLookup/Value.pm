@@ -60,13 +60,13 @@ After that all that remains is to populate the cgiapp_values table with the appr
 not need to know what comes after the dot in the templates. So if you want to set "values.hope" to "disappointment" in all English
 pages you would run
 
-	INSERT (lang, param, value) INTO cgiapp_values VALUES ('en', 'hope', 'disappointment')
+	INSERT INTO cgiapp_values (lang, param, value) VALUES ('en', 'hope', 'disappointment')
 
 On the other hand if you wanted set "values.hope" to "a glimmer of light" on page 7 but "disappointment" everywhere else, then you would
 run
 
-	INSERT (lang, param, value) INTO cgiapp_values VALUES ('en', 'hope', 'disappointment')
-	INSERT (lang, internalId, param, value) INTO cgiapp_values VALUES ('en', 7, 'hope', 'a glimmer of light')
+	INSERT INTO cgiapp_values (lang, param, value) VALUES ('en', 'hope', 'disappointment')
+	INSERT INTO cgiapp_values (lang, internalId, param, value) VALUES ('en', 7, 'hope', 'a glimmer of light')
 	
 
 =head1 DATABASE
@@ -97,7 +97,6 @@ sub new {
 	$self->{cgiapp} = shift;
 	$self->{page_id} = shift;
 	$self->{template} = shift;
-	$self->{hash_ref} = shift;
 	my %args = @_;
 	$self->{config} = \%args;
 	bless $self, $class;

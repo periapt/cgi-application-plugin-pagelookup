@@ -87,7 +87,6 @@ page and that provides aupport for multiple languages and the 'dot' notation in 
 				my $self = shift;
 				my $page_id = shift;
 				my $template = shift;
-				my $hash_ref = shift;
 				........  
 			}
 
@@ -110,7 +109,6 @@ page and that provides aupport for multiple languages and the 'dot' notation in 
 	my $self = shift;
 	my $page_id = shift;
 	my $template = shift;
-	my $hash_ref = shift;
 	return ........... # smart object that can be used for dot notation
     }
 
@@ -239,7 +237,7 @@ This way the template can be much more decoupled from the structure of the datab
 
 There are three ways a smart object can be defined. Firstly if the value is a CODE ref,
 then the ref is passed 1.) the reference to the CGI::Application object; 2.) the page id; 3.) the template,
-4.) the hash_ref and 5.) any argument overrides. Otherwise if the CGI::Application has the value as a method, then the method is called with 
+4.) any argument overrides. Otherwise if the CGI::Application has the value as a method, then the method is called with 
 the same arguments as above. Finally the value is assumed to be the name of a module and the new constructor
 of the supposed module is called with the same arguments. A typical smart object might be coded as follows:
 
@@ -253,6 +251,7 @@ of the supposed module is called with the same arguments. A typical smart object
 	}
 
 	# If you do not have this, then HTML::Template::Plugin::Dot will not know that you can!
+	# [Note really can is supposed to return a subroutine ref, but this works in this context.]
 	sub can { return 1; }
 
 	# This is the function that actually produces the value to be inserted into the template.
@@ -268,6 +267,9 @@ of the supposed module is called with the same arguments. A typical smart object
 		.....
 		return $value;
 	}
+
+Note that the smart object does not have access to HASH ref because the data is changing at the point
+it would be used and so is non-deterministic.
 
 =item charset
 
@@ -421,14 +423,14 @@ sub pagelookup {
 	my $object = undef;
 
 	if (ref($ovalue) eq "CODE") {
-		$object = &$ovalue($self, $page_id, $template, $hash_ref, @inargs);
+		$object = &$ovalue($self, $page_id, $template, @inargs);
 	}
 	elsif ($self->can($ovalue)) {
-		$object = $self->$ovalue($page_id, $template, $hash_ref, @inargs);
+		$object = $self->$ovalue($page_id, $template, @inargs);
 	}
 	else {
 		$object = eval {
-			return $ovalue->new($self, $page_id, $template, $hash_ref, @inargs);
+			return $ovalue->new($self, $page_id, $template, @inargs);
 		};
 		croak "Could not create smart object: $okey: $@" if $@;
 	}

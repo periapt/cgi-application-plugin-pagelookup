@@ -5,8 +5,7 @@ sub new {
         my $cgiapp = shift;
         my $page_id = shift;
         my $template = shift;
-        my $hash_ref = shift;
-        my $o =  "$page_id|$hash_ref->{home}|$hash_ref->{path}|".($template->query(name=>'home'));
+        my $o =  "$page_id|".($template->query(name=>'home'));
 	bless \$o, $class;
 	return \$o;
 }

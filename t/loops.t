@@ -1,0 +1,141 @@
+#!perl  
+
+use strict;
+use warnings;
+use Test::More tests => 16;
+use Test::Differences;
+use lib qw(t/lib);
+
+BEGIN {
+	use_ok( 'CGI::Application::Plugin::PageLookup::Loop' );
+}
+
+use DBI;
+unlink "t/dbfile";
+
+
+my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId, template, changefreq)");
+$dbh->do("create table cgiapp_lang (lang, collation)");
+$dbh->do("create table cgiapp_values (lang, internalId, param, value)");
+$dbh->do("create table cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop1', 'en', 0, 't/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop2', 'en', 1, 't/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
+
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 0, 'href1', '')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 0, 'atitle1', 'Home page')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 1, 'href1', '/aboutus')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 1, 'atitle1', 'About us')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 2, 'href1', '/products')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 2, 'atitle1', 'Our products')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 3, 'href1', '/contactus')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 3, 'atitle1', 'Contact us')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 4, 'href1', '/sitemap')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 4, 'atitle1', 'Sitemap')");
+
+
+use CGI;
+use TestApp;
+
+$ENV{CGI_APP_RETURN_ONLY} = 1;
+use CGI::Application::Plugin::PageLookup::Value;
+my $params = {remove=>['template','pageId','internalId','changefreq'], 
+	template_params=>{global_vars=>1},
+	objects=>{
+		loop=>'CGI::Application::Plugin::PageLookup::Loop'
+	}
+};
+
+sub response_like {
+        my ($app, $header_re, $body_re, $comment) = @_;
+
+        local $ENV{CGI_APP_RETURN_ONLY} = 1;
+        my $output = $app->run;
+        my ($header, $body) = split /\r\n\r\n/m, $output;
+        $header =~ s/\r\n/|/g;
+        like($header, $header_re, "$comment (header match)");
+        eq_or_diff($body,      $body_re,       "$comment (body match)");
+}
+
+{
+        my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
+        isa_ok($app, 'CGI::Application');
+
+        response_like(
+                $app,
+                qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                "Hello World: basic_test",
+                'TestApp, blank query',
+        );
+}
+
+{
+my $html=<<EOS
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<body>
+
+</body>
+</html>
+EOS
+;
+
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop1'}));
+        response_like(
+                $app,
+                qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
+                'TestApp, test1'
+        );
+}
+
+{
+my $html=<<EOS
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<body>
+
+    <ul>
+    
+        <li>
+                <a href="/en/">Home page</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/aboutus/">About us</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/products/">Our products</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/contactus/">Contact us</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/sitemap/">Sitemap</a>
+                
+        </li>
+    
+    </ul>
+
+</body>
+</html>
+EOS
+;
+
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop2'}));
+        response_like(
+                $app,
+                qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
+                'TestApp, test2'
+        );
+}
+

@@ -39,6 +39,7 @@ sub cgiapp_init {
 		$params{msg_param}='error_param';
 	}
 	$params{xml_sitemap_base_url} = $self->param('xml_sitemap_base_url') if $self->param('xml_sitemap_base_url');
+	$params{template_params} = $self->param('template_params') if $self->param('template_params');
 	if ($self->param('objects')) {
 		use HTML::Template::Pluggable;
 		use HTML::Template::Plugin::Dot;

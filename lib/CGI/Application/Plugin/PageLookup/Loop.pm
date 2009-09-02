@@ -32,7 +32,7 @@ In the template you might define a menu as follows (with some CSS and javascript
     <ul>
     <TMPL_LOOP NAME="loop.menu">
 	<li>
-		<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="href1">"><TMPL_VAR NAME="atitle1"></a>
+		<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="this.href1">"><TMPL_VAR NAME="this.atitle1"></a>
 		<TMPL_IF NAME="submenu1">
 		<ul>
 		<TMPL_LOOP NAME="submenu1">
@@ -56,7 +56,8 @@ In the template you might define a menu as follows (with some CSS and javascript
     </ul>
 
 and the intention is that this should be the same on all English pages, the same on all Vietnamese pages etc etc.
-You must register the "loop" parameter as a CGI::Application::Plugin::PageLookup::Loop object as follows:
+The use of "this." below the top levels is dictated by L<HTML::Template::Plugin::Dot> which also optionally allows
+renaming of this implicit variable. You must register the "loop" parameter as a CGI::Application::Plugin::PageLookup::Loop object as follows:
 
     use CGI::Application;
     use CGI::Application::Plugin::PageLookup qw(:all);
@@ -79,25 +80,49 @@ You must register the "loop" parameter as a CGI::Application::Plugin::PageLookup
                 (
                         # Register the 'values' parameter
                         loop => 'CGI::Application::Plugin::PageLookup::Loop,
-		}
+		},
+
+		# Processing of the 'lang' parameter inside a loop requires global_vars = 1 inside the template infrastructure
+		template_params => {global_vars => 1}
+
 	);
     }
 
 
     ...
 
-The astute reader will notice that the above will only work if you set the 'global_vars' to true. After that all that remains is to populate the cgiapp_values table with the appropriate values. Notice that the code does
-not need to know what comes after the dot in the templates. So if you want to set "values.hope" to "disappointment" in all English
-pages you would run
+The astute reader will notice that the above will only work if you set the 'global_vars' to true. After that all that remains is to populate
+the cgiapp_loops table with the appropriate values. To fill the above menu you might run the following SQL:
 
-	INSERT (lang, param, value) VALUES ('en', 'hope', 'disappointment')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'href1', '')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'atitle1', 'Home page')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'href1', 'aboutus')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'atitle1', 'About us')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'href1', 'products')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'atitle1', 'Our products')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'href1', 'contactus')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'atitle1', 'Contact us')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'href1', 'sitemap')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'atitle1', 'Sitemap')
 
-On the other hand if you wanted set "values.hope" to "a glimmer of light" on page 7 but "disappointment" everywhere else, then you would
-run
+Now suppose that you need to describe the products in more detail. Then you might add the following rows:
 
-	INSERT (lang, param, value) VALUES ('en', 'hope', 'disappointment')
-	INSERT (lang, internalId, param, value) VALUES ('en', 7, 'hope', 'a glimmer of light')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'href2', 'wodgets')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'atitle2', 'Finest wodgets')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'href2', 'bladgers')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'atitle2', 'Delectable bladgers')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'href2', 'spodges')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'atitle2', 'Exquisite spodges')
 	
+Now suppose that the bladger market is hot, and we need to further subdivide our menu. Then you might add the following rows:
+
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'href3', 'bladgers/runcible')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'atitle3', 'Runcible bladgers')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'href3', 'bladgers/collapsible')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'atitle3', 'Collapsible bladgers')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'href3', 'bladgers/goldplated')
+	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'atitle3', 'Gold plated bladgers')
+
 
 =head1 DATABASE
 
@@ -134,7 +159,6 @@ sub new {
 	$self->{cgiapp} = shift;
 	$self->{page_id} = shift;
 	$self->{template} = shift;
-	$self->{hash_ref} = shift;
 	my %args = @_;
 	$self->{config} = \%args;
 	bless $self, $class;
@@ -143,8 +167,8 @@ sub new {
 
 =head2 can
 
-We need to autoload methods so that the template writer can use variables without needing to know
-where the variables  will be used. Thus 'can' must return a true value in all cases to avoid breaking
+We need to autoload methods so that the template writer can use loops without needing to know
+where the loops will be used. Thus 'can' must return a true value in all cases to avoid breaking
 L<HTML::Template::Plugin::Dot>. Also 'can' is supposed to either return undef or a CODE ref. This seems the cleanest
 way of meeting all requirements.
 
@@ -155,31 +179,66 @@ sub can {
 	my $param = shift;
 	return sub {
 	  my $self = shift;
+	  my $lineage = shift || '';
           my $prefix = $self->{cgiapp}->pagelookup_prefix(%{$self->{config}});
           my $page_id = $self->{page_id};
           my $dbh = $self->{cgiapp}->dbh;
+	
+	  # This is what we actually want to return
+	  my @loop;
+
+	  # These are temporary variables that will help us get there
+	  my $current_row = undef;
+	  my $current_rank = undef;
+	  my @work_to_be_done;
+
+	  # First one pass over the loop
           my @sql = (
-                "SELECT v.value FROM ${prefix}values v, ${prefix}pages p WHERE v.internalId = p.internalId AND v.param = '$param' AND v.lang = p.lang AND p.pageId = '$page_id'",
-                "SELECT v.value FROM ${prefix}values v, ${prefix}pages p WHERE v.internalId IS NULL AND v.param = '$param' AND v.lang = p.lang AND p.pageId = '$page_id'");
+                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId = p.internalId AND l.loopName = '$param' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$lineage' order by l.rank asc",
+                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId IS NULL AND l.loopName = '$param' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$lineage' order by l.rank asc");
           foreach my $s (@sql) {
                 my $sth = $dbh->prepare($s) || croak $dbh->errstr;
                 $sth->execute || croak $dbh->errstr;
-                my $hash_ref = $sth->fetchrow_hashref;
-                if ($hash_ref) {
-                        $sth->finish;
-                        return $hash_ref->{value};
-                }
+                while(my $hash_ref = $sth->fetchrow_hashref) {
+
+			my $next_rank = $hash_ref->{rank};
+			my $param = $hash_ref->{param};
+			my $value = $hash_ref->{value};
+
+			# rank transitions
+			if (!defined($current_rank)) {
+				$current_rank = $next_rank;
+				$current_row = {};
+			}
+			elsif ($current_rank < $next_rank) {
+				push @loop, $current_row;
+				$current_row = {};
+				$current_rank = $next_rank;
+			}
+
+			# Need to determine if the variable is a loop or not
+			# Assume for the moment it is not.
+			$current_row->{$param} = $value;
+	
+				
+		}
                 croak $sth->errstr if $sth->err;
                 $sth->finish;
+		push @loop, $current_row if $current_row && %$current_row;
+		last if @loop;
           }
-          return undef;
+
+	  # Now go back over the remaining work
+	  # Well let's not implement this bit yet.
+
+          return \@loop;
 
 	};
 }
 
 =head2 AUTOLOAD 
 
-We need to autoload methods so that the template writer can use variables without needing to know
+We need to autoload methods so that the template writer can use loops without needing to know
 where the variables  will be used.
 
 =cut
