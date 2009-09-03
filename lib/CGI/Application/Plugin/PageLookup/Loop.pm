@@ -23,7 +23,7 @@ for example TMPL_LOOP in L<HTML::Template>, though one must use L<HTML::Template
 work. For example a menu is typically implemented in HTML as <ul>....</ul>. Using this module
 the menu can be instantiated from the database and the same data used to instantiate a human-readable
 sitemap page. On the other hand the staff page will have list data that is only required on that page.
-This module depends on L<CGI::Application::Plugin::PageLookup::Loop>.
+This module depends on L<CGI::Application::Plugin::PageLookup>.
 
 =head1 SYNOPSIS
 
