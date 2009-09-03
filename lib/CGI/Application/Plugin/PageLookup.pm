@@ -109,6 +109,7 @@ page and that provides aupport for multiple languages and the 'dot' notation in 
 	my $self = shift;
 	my $page_id = shift;
 	my $template = shift;
+	my $name = shift;
 	return ........... # smart object that can be used for dot notation
     }
 
@@ -237,7 +238,7 @@ This way the template can be much more decoupled from the structure of the datab
 
 There are three ways a smart object can be defined. Firstly if the value is a CODE ref,
 then the ref is passed 1.) the reference to the CGI::Application object; 2.) the page id; 3.) the template,
-4.) any argument overrides. Otherwise if the CGI::Application has the value as a method, then the method is called with 
+4.) the parameter name 5.) any argument overrides. Otherwise if the CGI::Application has the value as a method, then the method is called with 
 the same arguments as above. Finally the value is assumed to be the name of a module and the new constructor
 of the supposed module is called with the same arguments. A typical smart object might be coded as follows:
 
@@ -423,14 +424,14 @@ sub pagelookup {
 	my $object = undef;
 
 	if (ref($ovalue) eq "CODE") {
-		$object = &$ovalue($self, $page_id, $template, @inargs);
+		$object = &$ovalue($self, $page_id, $template, $okey, @inargs);
 	}
 	elsif ($self->can($ovalue)) {
-		$object = $self->$ovalue($page_id, $template, @inargs);
+		$object = $self->$ovalue($page_id, $template, $okey, @inargs);
 	}
 	else {
 		$object = eval {
-			return $ovalue->new($self, $page_id, $template, @inargs);
+			return $ovalue->new($self, $page_id, $template, $okey, @inargs);
 		};
 		croak "Could not create smart object: $okey: $@" if $@;
 	}

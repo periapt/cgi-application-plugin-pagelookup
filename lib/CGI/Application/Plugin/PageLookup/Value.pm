@@ -97,6 +97,7 @@ sub new {
 	$self->{cgiapp} = shift;
 	$self->{page_id} = shift;
 	$self->{template} = shift;
+	$self->{name} = shift;
 	my %args = @_;
 	$self->{config} = \%args;
 	bless $self, $class;

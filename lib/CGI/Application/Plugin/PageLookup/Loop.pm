@@ -94,34 +94,34 @@ renaming of this implicit variable. You must register the "loop" parameter as a 
 The astute reader will notice that the above will only work if you set the 'global_vars' to true. After that all that remains is to populate
 the cgiapp_loops table with the appropriate values. To fill the above menu you might run the following SQL:
 
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'href1', '')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'atitle1', 'Home page')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'href1', 'aboutus')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'atitle1', 'About us')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'href1', 'products')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'atitle1', 'Our products')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'href1', 'contactus')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'atitle1', 'Contact us')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'href1', 'sitemap')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'atitle1', 'Sitemap')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'href1', '')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'atitle1', 'Home page')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'href1', 'aboutus')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'atitle1', 'About us')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'href1', 'products')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'atitle1', 'Our products')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'href1', 'contactus')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'atitle1', 'Contact us')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'href1', 'sitemap')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'atitle1', 'Sitemap')
 
 Now suppose that you need to describe the products in more detail. Then you might add the following rows:
 
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'href2', 'wodgets')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'atitle2', 'Finest wodgets')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'href2', 'bladgers')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'atitle2', 'Delectable bladgers')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'href2', 'spodges')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'atitle2', 'Exquisite spodges')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'href2', 'wodgets')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'atitle2', 'Finest wodgets')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'href2', 'bladgers')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'atitle2', 'Delectable bladgers')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'href2', 'spodges')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'atitle2', 'Exquisite spodges')
 	
 Now suppose that the bladger market is hot, and we need to further subdivide our menu. Then you might add the following rows:
 
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'href3', 'bladgers/runcible')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'atitle3', 'Runcible bladgers')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'href3', 'bladgers/collapsible')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'atitle3', 'Collapsible bladgers')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'href3', 'bladgers/goldplated')
-	INSERT INTO cgiapp_loops INTO cgiapp_loops INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'atitle3', 'Gold plated bladgers')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'href3', 'bladgers/runcible')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'atitle3', 'Runcible bladgers')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'href3', 'bladgers/collapsible')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'atitle3', 'Collapsible bladgers')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'href3', 'bladgers/goldplated')
+	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'atitle3', 'Gold plated bladgers')
 
 
 =head1 DATABASE
@@ -159,8 +159,29 @@ sub new {
 	$self->{cgiapp} = shift;
 	$self->{page_id} = shift;
 	$self->{template} = shift;
+	$self->{name} = shift;
 	my %args = @_;
 	$self->{config} = \%args;
+
+#        # need to know about the loop structure of the template
+#	# (This assumes globalvars=>1 has been set in HTML::Template:...)
+#	my @vars = $self->{template}->query();
+#	foreach my $var (@vars) {
+#
+#		# We only need to know about TMPL_LOOP variables
+#		next unless $self->{template}->query(name => $var) eq 'LOOP';
+#
+#		# Now we need to pick out the relevant variables
+#		# following the mechanics in HTML::Template::Plugin::Dot.
+#		# Two styles:
+#		#	$var = "$one.$the_rest" where $loopmap_name eq "this".
+#		#	$var = "$one.$the_rest:$loopmap_name"
+#		my ($one, $the_rest) = split /\./, $var, 2;
+#		my $loopmap_name = 'this';
+#		$loopmap_name = $1 if $the_rest =~ s/\s*:\s*([_a-z]\w*)\s*$//;
+#		$self->{structure}->{$one}->{$the_rest} = $loopmap_name;
+#	}
+	
 	bless $self, $class;
 	return $self;
 }
@@ -176,10 +197,21 @@ way of meeting all requirements.
 
 sub can {
 	my $self = shift;
-	my $param = shift;
+	my $loopName = shift;
 	return sub {
 	  my $self = shift;
-	  my $lineage = shift || '';
+	
+          # $dlineage are the "breadcrumbs" required to navigate our way through the database
+	  # and corresponds to the 'lineage' column on the cgiapp_loops table.
+	  my $dlineage = shift;
+	  $dlineage = '' unless defined($dlineage);
+
+	  # $tlineage are the "breadcrumbs" required to navigate our way through the HTML::Template structure.
+	  # It corresponds to the ARRAY ref used in $template->query(loop=> [....]) only that the
+	  # post "dot" string of the final array member (aka $loopName) is missing.
+	  my $tlineage = shift;
+	  $tlineage = [$self->{name}] unless defined($tlineage);
+
           my $prefix = $self->{cgiapp}->pagelookup_prefix(%{$self->{config}});
           my $page_id = $self->{page_id};
           my $dbh = $self->{cgiapp}->dbh;
@@ -190,12 +222,12 @@ sub can {
 	  # These are temporary variables that will help us get there
 	  my $current_row = undef;
 	  my $current_rank = undef;
-	  my @work_to_be_done;
+	  $self->{work_to_be_done} = [] unless exists $self->{work_to_be_done};
 
 	  # First one pass over the loop
           my @sql = (
-                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId = p.internalId AND l.loopName = '$param' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$lineage' order by l.rank asc",
-                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId IS NULL AND l.loopName = '$param' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$lineage' order by l.rank asc");
+                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId = p.internalId AND l.loopName = '$loopName' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$dlineage' order by l.rank asc",
+                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId IS NULL AND l.loopName = '$loopName' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$dlineage' order by l.rank asc");
           foreach my $s (@sql) {
                 my $sth = $dbh->prepare($s) || croak $dbh->errstr;
                 $sth->execute || croak $dbh->errstr;
@@ -211,25 +243,33 @@ sub can {
 				$current_row = {};
 			}
 			elsif ($current_rank < $next_rank) {
+
+				# Now we need to add in any loop variables
+				$self->__populate_lower_loops($dlineage, $tlineage, $current_row, $current_rank, $loopName);
+
+				# We are finally ready to get this structure out of the door
 				push @loop, $current_row;
 				$current_row = {};
 				$current_rank = $next_rank;
 			}
 
-			# Need to determine if the variable is a loop or not
-			# Assume for the moment it is not.
 			$current_row->{$param} = $value;
-	
 				
 		}
                 croak $sth->errstr if $sth->err;
                 $sth->finish;
-		push @loop, $current_row if $current_row && %$current_row;
+		if ($current_row) {
+			$self->__populate_lower_loops($dlineage, $tlineage, $current_row, $current_rank, $loopName);
+			push @loop, $current_row if %$current_row;
+		}
 		last if @loop;
           }
 
 	  # Now go back over the remaining work
-	  # Well let's not implement this bit yet.
+	  while(@{$self->{work_to_be_done}}) {
+		my $work = shift @{$self->{work_to_be_done}};
+		&$work();
+	  }
 
           return \@loop;
 
@@ -248,9 +288,47 @@ sub AUTOLOAD {
 	my @method = split /::/, $AUTOLOAD;
 	my $param = pop @method;
 	my $c = $self->can($param);
-	return &$c($self) if $c;
+	return &$c($self, @_) if $c;
 	return undef;
 }
+
+=head2 __populate_lower_loops
+
+=cut 
+
+sub __populate_lower_loops {
+	my $self = shift;
+	my $dlineage = shift;
+	my $tlineage = shift;
+	my $current_row = shift;
+	my $current_rank = shift;
+	my $loopName = shift;
+        my $new_dlineage = join(",", (split /,/, $dlineage), $current_rank);
+        my @new_tlineage = @$tlineage;
+        my $thead = pop @new_tlineage;
+        push @new_tlineage, "$thead.$loopName";
+        my @new_vars = $self->{template}->query(loop=>\@new_tlineage);
+        foreach my $var (@new_vars) {
+
+        	# exclude anything that is not a loop
+                next if $self->{template}->query(name=>[@new_tlineage, $var]) eq 'VAR';
+
+                # extract new loop name (following mechanics in HTML::Template::Plugin::Dot)
+                my ($one, $the_rest) = split /\./, $var, 2;
+                my $loopmap_name = 'this';
+                $loopmap_name = $1 if $the_rest =~ s/\s*:\s*([_a-z]\w*)\s*$//;
+
+                # Okay we have set up the structure but let's finish the current SQL
+                # before populating this one
+                my $new_loop = [];
+                $current_row->{$the_rest} = $new_loop;
+                my $new_tlineage = [@new_tlineage, $one];
+                push @{$self->{work_to_be_done}}, sub {
+                	push @$new_loop,  @{$self->$the_rest($new_dlineage, $new_tlineage)};
+                };
+        }
+}
+
 
 =head2 DESTRROY
 

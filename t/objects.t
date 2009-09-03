@@ -34,7 +34,7 @@ my $params = {remove=>['template','pageId','priority','lastmod','changefreq'],no
 	objects=>{
 		test1=>sub {
 			use SmartObjectTest;
-			return SmartObjectTest->new(shift, shift, shift);
+			return SmartObjectTest->new(shift, shift, shift, shift);
 		},
 		test2=>'create_smart_object',
 		test3=>'SmartObjectTest'
@@ -73,8 +73,8 @@ my $html=<<EOS
   <p>
   My Path is set to PATH
 
-  test1: en/test1|VAR|hop
-  test2: en/test1|VAR|skip
+  test1: en/test1|test1|VAR|hop
+  test2: en/test1|test2|VAR|skip
   test3: Just when you thought you had got the pattern: jump
   </body>
   </html>
@@ -100,8 +100,8 @@ my $html=<<EOS
   <p>
   My Path is set to PATH1
 
-  test1: en/test2|VAR|hop
-  test2: en/test2|VAR|skip
+  test1: en/test2|test1|VAR|hop
+  test2: en/test2|test2|VAR|skip
   test3: Just when you thought you had got the pattern: jump
   </body>
   </html>
@@ -128,8 +128,8 @@ my $html=<<EOS
   <p>
   My Path is set to Stra&szlig;e
 
-  test1: de/test1|VAR|hop
-  test2: de/test1|VAR|skip
+  test1: de/test1|test1|VAR|hop
+  test2: de/test1|test2|VAR|skip
   test3: Gerade als Sie dachten, Sie hatten das Muster gehabt:  Sprung
   </body>
   </html>
@@ -155,8 +155,8 @@ my $html=<<EOS
   <p>
   My Path is set to Stra&szlig;e1
 
-  test1: de/test2|VAR|hop
-  test2: de/test2|VAR|skip
+  test1: de/test2|test1|VAR|hop
+  test2: de/test2|test2|VAR|skip
   test3: Gerade als Sie dachten, Sie hatten das Muster gehabt:  Sprung
   </body>
   </html>
@@ -184,8 +184,8 @@ my $html=<<EOS
 
   My error message for you: en/test3
 
-  test1: en/notfound|VAR|hop
-  test2: en/notfound|VAR|skip
+  test1: en/notfound|test1|VAR|hop
+  test2: en/notfound|test2|VAR|skip
   test3: Just when you thought you had got the pattern: jump
 
   </body>
@@ -214,8 +214,8 @@ my $html=<<EOS
 
   My error message for you: de/test3
 
-  test1: de/notfound|VAR|hop
-  test2: de/notfound|VAR|skip
+  test1: de/notfound|test1|VAR|hop
+  test2: de/notfound|test2|VAR|skip
   test3: Gerade als Sie dachten, Sie hatten das Muster gehabt:  Sprung
 
   </body>

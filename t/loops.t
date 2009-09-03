@@ -21,8 +21,11 @@ $dbh->do("create table cgiapp_values (lang, internalId, param, value)");
 $dbh->do("create table cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value)");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop1', 'en', 0, 't/templ/testL1.tmpl', 'daily')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop2', 'en', 1, 't/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop3', 'en', 2, 't/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop4', 'en', 3, 't/templ/testL1.tmpl', 'daily')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
 
+# First menu test
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 0, 'href1', '')");
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 0, 'atitle1', 'Home page')");
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 1, 'href1', '/aboutus')");
@@ -34,6 +37,47 @@ $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, p
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 4, 'href1', '/sitemap')");
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 4, 'atitle1', 'Sitemap')");
 
+# Second menu test
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 0, 'href1', '')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 0, 'atitle1', 'Home page')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 1, 'href1', '/aboutus')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 1, 'atitle1', 'About us')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 2, 'href1', '/products')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 2, 'atitle1', 'Our products')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 3, 'href1', '/contactus')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 3, 'atitle1', 'Contact us')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 4, 'href1', '/sitemap')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'menu', '', 4, 'atitle1', 'Sitemap')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'submenu1', '2', 0, 'href2', '/wodgets')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'submenu1', '2', 0, 'atitle2', 'Finest wodgets')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'submenu1', '2', 1, 'href2', '/bladgers')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'submenu1', '2', 1, 'atitle2', 'Exquisite bladgers')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'submenu1', '2', 2, 'href2', '/spodges')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 2, 'submenu1', '2', 2, 'atitle2', 'Cheap spodges')");
+
+# Third menu test
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 0, 'href1', '')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 0, 'atitle1', 'Home page')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 1, 'href1', '/aboutus')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 1, 'atitle1', 'About us')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 2, 'href1', '/products')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 2, 'atitle1', 'Our products')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 3, 'href1', '/contactus')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 3, 'atitle1', 'Contact us')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 4, 'href1', '/sitemap')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'menu', '', 4, 'atitle1', 'Sitemap')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu1', '2', 0, 'href2', '/wodgets')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu1', '2', 0, 'atitle2', 'Finest wodgets')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu1', '2', 1, 'href2', '/bladgers')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu1', '2', 1, 'atitle2', 'Exquisite bladgers')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu1', '2', 2, 'href2', '/spodges')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu1', '2', 2, 'atitle2', 'Cheap spodges')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 0, 'href3', '/bladgers/runcible')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 0, 'atitle3', 'Runcible bladgers')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 1, 'href3', '/bladgers/extendible')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 1, 'atitle3', 'Extendible bladgers')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 2, 'href3', '/bladgers/goldplated')");
+$dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 2, 'atitle3', 'Gold-plated bladgers')");
 
 use CGI;
 use TestApp;
@@ -86,9 +130,10 @@ EOS
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
                 $html,
-                'TestApp, test1'
+                'TestApp, just structure'
         );
 }
+
 
 {
 my $html=<<EOS
@@ -135,7 +180,162 @@ EOS
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
                 $html,
-                'TestApp, test2'
+                'TestApp, menu'
         );
 }
+
+{
+my $html=<<EOS
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<body>
+
+    <ul>
+    
+        <li>
+                <a href="/en/">Home page</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/aboutus/">About us</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/products/">Our products</a>
+                
+                <ul>
+                
+                        <li>
+                                <a href="/en/wodgets/">Finest wodgets</a>
+                                
+                        </li>
+                
+                        <li>
+                                <a href="/en/bladgers/">Exquisite bladgers</a>
+                                
+                        </li>
+                
+                        <li>
+                                <a href="/en/spodges/">Cheap spodges</a>
+                                
+                        </li>
+                
+                </ul>
+                
+        </li>
+    
+        <li>
+                <a href="/en/contactus/">Contact us</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/sitemap/">Sitemap</a>
+                
+        </li>
+    
+    </ul>
+
+</body>
+</html>
+EOS
+;
+
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop3'}));
+        response_like(
+                $app,
+                qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
+                'TestApp, submenu'
+        );
+}
+
+
+{
+my $html=<<EOS
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<body>
+
+    <ul>
+    
+        <li>
+                <a href="/en/">Home page</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/aboutus/">About us</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/products/">Our products</a>
+                
+                <ul>
+                
+                        <li>
+                                <a href="/en/wodgets/">Finest wodgets</a>
+                                
+                        </li>
+                
+                        <li>
+                                <a href="/en/bladgers/">Exquisite bladgers</a>
+                                
+                                <ul>
+                                
+                                <li>
+                                        <a href="/en/bladgers/runcible/">Runcible bladgers</a>
+                                </li>
+                                
+                                <li>
+                                        <a href="/en/bladgers/extendible/">Extendible bladgers</a>
+                                </li>
+                                
+                                <li>
+                                        <a href="/en/bladgers/goldplated/">Gold-plated bladgers</a>
+                                </li>
+                                
+                                </ul>
+                                
+                        </li>
+                
+                        <li>
+                                <a href="/en/spodges/">Cheap spodges</a>
+                                
+                        </li>
+                
+                </ul>
+                
+        </li>
+    
+        <li>
+                <a href="/en/contactus/">Contact us</a>
+                
+        </li>
+    
+        <li>
+                <a href="/en/sitemap/">Sitemap</a>
+                
+        </li>
+    
+    </ul>
+
+</body>
+</html>
+EOS
+;
+
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop4'}));
+        response_like(
+                $app,
+                qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                $html,
+                'TestApp, subsubmenu'
+        );
+}
+
+
 

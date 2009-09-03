@@ -5,16 +5,16 @@
     <TMPL_LOOP NAME="loop.menu">
         <li>
                 <a href="/<TMPL_VAR NAME="lang"><TMPL_VAR NAME="this.href1">/"><TMPL_VAR NAME="this.atitle1"></a>
-                <TMPL_IF NAME="submenu1">
+                <TMPL_IF NAME="this.submenu1">
                 <ul>
-                <TMPL_LOOP NAME="submenu1">
+                <TMPL_LOOP NAME="this.submenu1">
                         <li>
-                                <a href="/<TMPL_VAR NAME="lang"><TMPL_VAR NAME="href2">/"><TMPL_VAR NAME="atitle2"></a>
-                                <TMPL_IF NAME="submenu2">
+                                <a href="/<TMPL_VAR NAME="lang"><TMPL_VAR NAME="this.href2">/"><TMPL_VAR NAME="this.atitle2"></a>
+                                <TMPL_IF NAME="this.submenu2">
                                 <ul>
-                                <TMPL_LOOP NAME="submenu2">
+                                <TMPL_LOOP NAME="this.submenu2">
                                 <li>
-                                        <a href="/<TMPL_VAR NAME="lang"><TMPL_VAR NAME="href3">/"><TMPL_VAR NAME="atitle3"></a>
+                                        <a href="/<TMPL_VAR NAME="lang"><TMPL_VAR NAME="this.href3">/"><TMPL_VAR NAME="this.atitle3"></a>
                                 </li>
                                 </TMPL_LOOP>
                                 </ul>
