@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 16;
+use Test::More tests => 12;
 use Test::Differences;
 use lib qw(t/lib);
 

@@ -163,25 +163,6 @@ sub new {
 	my %args = @_;
 	$self->{config} = \%args;
 
-#        # need to know about the loop structure of the template
-#	# (This assumes globalvars=>1 has been set in HTML::Template:...)
-#	my @vars = $self->{template}->query();
-#	foreach my $var (@vars) {
-#
-#		# We only need to know about TMPL_LOOP variables
-#		next unless $self->{template}->query(name => $var) eq 'LOOP';
-#
-#		# Now we need to pick out the relevant variables
-#		# following the mechanics in HTML::Template::Plugin::Dot.
-#		# Two styles:
-#		#	$var = "$one.$the_rest" where $loopmap_name eq "this".
-#		#	$var = "$one.$the_rest:$loopmap_name"
-#		my ($one, $the_rest) = split /\./, $var, 2;
-#		my $loopmap_name = 'this';
-#		$loopmap_name = $1 if $the_rest =~ s/\s*:\s*([_a-z]\w*)\s*$//;
-#		$self->{structure}->{$one}->{$the_rest} = $loopmap_name;
-#	}
-	
 	bless $self, $class;
 	return $self;
 }
@@ -197,25 +178,25 @@ way of meeting all requirements.
 
 sub can {
 	my $self = shift;
-	my $loopName = shift;
+	my $loopname = shift;
 	return sub {
 	  my $self = shift;
-	
+
           # $dlineage are the "breadcrumbs" required to navigate our way through the database
 	  # and corresponds to the 'lineage' column on the cgiapp_loops table.
 	  my $dlineage = shift;
-	  $dlineage = '' unless defined($dlineage);
+	  $dlineage = "" unless defined $dlineage;
 
 	  # $tlineage are the "breadcrumbs" required to navigate our way through the HTML::Template structure.
 	  # It corresponds to the ARRAY ref used in $template->query(loop=> [....]) only that the
-	  # post "dot" string of the final array member (aka $loopName) is missing.
+	  # post "dot" string of the final array member (aka $loopname) is missing.
 	  my $tlineage = shift;
-	  $tlineage = [$self->{name}] unless defined($tlineage);
+	  $tlineage = [$self->{name}] unless defined $tlineage;
 
           my $prefix = $self->{cgiapp}->pagelookup_prefix(%{$self->{config}});
           my $page_id = $self->{page_id};
           my $dbh = $self->{cgiapp}->dbh;
-	
+
 	  # This is what we actually want to return
 	  my @loop;
 
@@ -226,8 +207,8 @@ sub can {
 
 	  # First one pass over the loop
           my @sql = (
-                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId = p.internalId AND l.loopName = '$loopName' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$dlineage' order by l.rank asc",
-                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId IS NULL AND l.loopName = '$loopName' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$dlineage' order by l.rank asc");
+                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId = p.internalId AND l.loopName = '$loopname' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$dlineage' order by l.rank asc",
+                "SELECT l.rank, l.param, l.value FROM ${prefix}loops l, ${prefix}pages p WHERE l.internalId IS NULL AND l.loopName = '$loopname' AND l.lang = p.lang AND p.pageId = '$page_id' and l.lineage = '$dlineage' order by l.rank asc");
           foreach my $s (@sql) {
                 my $sth = $dbh->prepare($s) || croak $dbh->errstr;
                 $sth->execute || croak $dbh->errstr;
@@ -238,14 +219,14 @@ sub can {
 			my $value = $hash_ref->{value};
 
 			# rank transitions
-			if (!defined($current_rank)) {
+			if (!defined $current_rank) {
 				$current_rank = $next_rank;
 				$current_row = {};
 			}
 			elsif ($current_rank < $next_rank) {
 
 				# Now we need to add in any loop variables
-				$self->__populate_lower_loops($dlineage, $tlineage, $current_row, $current_rank, $loopName);
+				$self->__populate_lower_loops($dlineage, $tlineage, $current_row, $current_rank, $loopname);
 
 				# We are finally ready to get this structure out of the door
 				push @loop, $current_row;
@@ -254,12 +235,12 @@ sub can {
 			}
 
 			$current_row->{$param} = $value;
-				
+
 		}
                 croak $sth->errstr if $sth->err;
                 $sth->finish;
 		if ($current_row) {
-			$self->__populate_lower_loops($dlineage, $tlineage, $current_row, $current_rank, $loopName);
+			$self->__populate_lower_loops($dlineage, $tlineage, $current_row, $current_rank, $loopname);
 			push @loop, $current_row if %$current_row;
 		}
 		last if @loop;
@@ -294,6 +275,8 @@ sub AUTOLOAD {
 
 =head2 __populate_lower_loops
 
+A private function that does what is says.
+
 =cut 
 
 sub __populate_lower_loops {
@@ -302,11 +285,12 @@ sub __populate_lower_loops {
 	my $tlineage = shift;
 	my $current_row = shift;
 	my $current_rank = shift;
-	my $loopName = shift;
-        my $new_dlineage = join(",", (split /,/, $dlineage), $current_rank);
+	my $loopname = shift;
+	my $comma = ',';
+        my $new_dlineage = join $comma , (split /,/, $dlineage), $current_rank;
         my @new_tlineage = @$tlineage;
         my $thead = pop @new_tlineage;
-        push @new_tlineage, "$thead.$loopName";
+        push @new_tlineage, "$thead.$loopname";
         my @new_vars = $self->{template}->query(loop=>\@new_tlineage);
         foreach my $var (@new_vars) {
 
@@ -327,6 +311,7 @@ sub __populate_lower_loops {
                 	push @$new_loop,  @{$self->$the_rest($new_dlineage, $new_tlineage)};
                 };
         }
+	return;
 }
 
 
