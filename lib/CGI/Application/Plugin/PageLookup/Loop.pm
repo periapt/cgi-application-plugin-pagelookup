@@ -77,9 +77,9 @@ renaming of this implicit variable. You must register the "loop" parameter as a 
 
                 # load smart dot-notation objects
                 objects =>
-                (
+                {
                         # Register the 'values' parameter
-                        loop => 'CGI::Application::Plugin::PageLookup::Loop,
+                        loop => 'CGI::Application::Plugin::PageLookup::Loop',
 		},
 
 		# Processing of the 'lang' parameter inside a loop requires global_vars = 1 inside the template infrastructure

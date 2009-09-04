@@ -69,15 +69,15 @@ page and that provides aupport for multiple languages and the 'dot' notation in 
 
 		# load smart dot-notation objects
 		objects => 
-		(
+		{
 			# Support for TMPL_LOOP
-			loop => 'CGI::Application::Plugin::PageLookup::Loop,
+			loop => 'CGI::Application::Plugin::PageLookup::Loop',
 
 			# Decoupling external and internal representations of URLs
-			href => 'CGI::Application::Plugin::PageLookup::Href,
+			href => 'CGI::Application::Plugin::PageLookup::Href',
 
 			# Page specific and site wide parameters
-			value => 'CGI::Application::Plugin::PageLookup::Value,
+			value => 'CGI::Application::Plugin::PageLookup::Value',
 
 			# We have defined a MyCGIApp::method method 
 			method => 'create_custom_object',
@@ -90,7 +90,7 @@ page and that provides aupport for multiple languages and the 'dot' notation in 
 				........  
 			}
 
-		),
+		},
 
 		# remove certain fields before sending the parameters to the template.
 		remove =>

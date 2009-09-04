@@ -64,9 +64,9 @@ You must register the "href" parameter as a CGI::Application::Plugin::PageLookup
 
                 # load smart dot-notation objects
                 objects =>
-                (
+                {
                         # Register the 'href' parameter
-                        href => 'CGI::Application::Plugin::PageLookup::Href,
+                        href => 'CGI::Application::Plugin::PageLookup::Href',
 		},
 
 
