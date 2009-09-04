@@ -13,23 +13,27 @@ BEGIN {
 use DBI;
 unlink "t/dbfile";
 
-
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, template, home, path)");
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
+$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
 $dbh->do("create table cgiapp_lang (lang, collation)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('en/test1', 'en', 't/templ/testL.tmpl', 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('en/test2', 'en', 't/templ/testL.tmpl', 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('de/test1', 'de', 't/templ/testL.tmpl', 'HEIMAT', 'Stra&szlig;e')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('de/test2', 'de', 't/templ/testL.tmpl', 'HEIMAT1', 'Stra&szlig;e1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('en/notfound', 'en', 't/templ/testNL.tmpl', 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('de/notfound', 'de', 't/templ/testNL.tmpl', 'HEIMAT', 'Stra&szlig;e3')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test1', 'en', 0, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test2', 'en', 1, 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test1', 'de', 0, 'HEIMAT', 'Stra&szlig;e')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test2', 'de', 1, 'HEIMAT1', 'Stra&szlig;e1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/notfound', 'en', 2, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/notfound', 'de', 2, 'HEIMAT', 'Stra&szlig;e3')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
+$dbh->do("insert into  cgiapp_structure(internalId, template) values(0,'t/templ/testL.tmpl')");
+$dbh->do("insert into  cgiapp_structure(internalId, template) values(1,'t/templ/testL.tmpl')");
+$dbh->do("insert into  cgiapp_structure(internalId, template) values(2,'t/templ/testNL.tmpl')");
 
 use CGI;
 use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
+my $params = {remove=>['template','pageId','internalId','changefreq'],notfound_stuff=>1};
 
 sub response_like {
         my ($app, $header_re, $body_re, $comment) = @_;
@@ -43,7 +47,7 @@ sub response_like {
 }
 
 {
-        my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
         isa_ok($app, 'CGI::Application');
 
         response_like(
@@ -67,7 +71,7 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/test1'}));
         response_like(
                 $app,
@@ -90,7 +94,7 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/test2'}));
         response_like(
                 $app,
@@ -114,7 +118,7 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/test1'}));
         response_like(
                 $app,
@@ -137,7 +141,7 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/test2'}));
         response_like(
                 $app,
@@ -162,7 +166,7 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/test3'}));
         response_like(
                 $app,
@@ -187,7 +191,7 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{remove=>['template','pageId'],notfound_stuff=>1});
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/test3'}));
         response_like(
                 $app,

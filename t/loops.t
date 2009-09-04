@@ -15,15 +15,20 @@ unlink "t/dbfile";
 
 
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId, template, changefreq)");
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId)");
+$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
 $dbh->do("create table cgiapp_lang (lang, collation)");
 $dbh->do("create table cgiapp_values (lang, internalId, param, value)");
 $dbh->do("create table cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop1', 'en', 0, 't/templ/testL1.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop2', 'en', 1, 't/templ/testL1.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop3', 'en', 2, 't/templ/testL1.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/loop4', 'en', 3, 't/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop1', 'en', 0)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop2', 'en', 1)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop3', 'en', 2)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop4', 'en', 3)");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testL1.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(3,'t/templ/testL1.tmpl', 'daily')");
 
 # First menu test
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 1, 'menu', '', 0, 'href1', '')");

@@ -14,13 +14,17 @@ BEGIN {
 use DBI;
 unlink "t/dbfile";
 
-
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table blah_pages (pageId, lang, template, home, path)");
+$dbh->do("create table blah_pages (pageId, lang, internalId, home, path)");
+$dbh->do("create table blah_structure (internalId, template, changefreq)");
 $dbh->do("create table blah_lang (lang)");
-$dbh->do("insert into  blah_pages (pageId, lang, template, home, path) values('test1', 'en', 't/templ/test.tmpl', 'HOME', 'PATH')");
-$dbh->do("insert into  blah_pages (pageId, lang, template, home, path) values('test2', 'en', 't/templ/test.tmpl', 'HOME1', 'PATH1')");
+$dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
+$dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
+$dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
 $dbh->do("insert into  blah_lang (lang) values('en')");
+$dbh->do("insert into  blah_structure(internalId, template) values(0,'t/templ/test.tmpl')");
+$dbh->do("insert into  blah_structure(internalId, template) values(1,'t/templ/test.tmpl')");
+$dbh->do("insert into  blah_structure(internalId, template) values(2,'t/templ/testN.tmpl')");
 
 use CGI;
 use TestApp;

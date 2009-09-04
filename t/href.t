@@ -13,25 +13,29 @@ BEGIN {
 use DBI;
 unlink "t/dbfile";
 
-
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId, template, changefreq)");
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId)");
+$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
 $dbh->do("create table cgiapp_lang (lang, collation, english, german, french, first, second, third)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/href', 'en', 0, 't/templ/testH.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/first', 'en', 1, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/second', 'en', 2, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('en/third', 'en', 3, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('fr/bleu', 'fr', 0, 't/templ/testH.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('fr/premier', 'fr', 1, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('fr/seconde', 'fr', 2, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('fr/troisieme', 'fr', 3, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('de/blau', 'de', 0, 't/templ/testH.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('de/erste', 'de', 1, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('de/zweite', 'de', 2, 't/templ/testJ.tmpl', 'daily')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, template, changefreq) values('de/dritte', 'de', 3, 't/templ/testJ.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/href', 'en', 0)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/first', 'en', 1)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/second', 'en', 2)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/third', 'en', 3)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('fr/bleu', 'fr', 0)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('fr/premier', 'fr', 1)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('fr/seconde', 'fr', 2)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('fr/troisieme', 'fr', 3)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('de/blau', 'de', 0)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('de/erste', 'de', 1)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('de/zweite', 'de', 2)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('de/dritte', 'de', 3)");
 $dbh->do("insert into  cgiapp_lang (lang, collation, english, german, french, first, second, third) values('en','GB','English', 'German', 'French', 'My first webpage', 'My second even better webpage', 'My web page to beat all webpages')");
 $dbh->do("insert into  cgiapp_lang (lang, collation, english, german, french, first, second, third) values('fr','FR','Anglais', 'Allemand', 'Fran&ccedil;ais', 'Mes page web premi&egrave;re', 'Mon deuxi&egrave;me encore meilleur site web', 'Ma page web &agrave; battre toutes les pages Web')");
 $dbh->do("insert into  cgiapp_lang (lang, collation, english, german, french, first, second, third) values('de','DE','Englisch', 'Deutsch', 'Franz&ouml;sisch', 'Meine erste Webseite', 'Meine zweite noch besser Webseite', 'Meine Seite zu schlagen alle Webseiten')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/testH.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/testJ.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testJ.tmpl', 'daily')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(3,'t/templ/testJ.tmpl', 'daily')");
 
 
 use CGI;

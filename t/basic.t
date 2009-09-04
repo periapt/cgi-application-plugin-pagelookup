@@ -16,12 +16,16 @@ unlink "t/dbfile";
 
 
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, template, home, path)");
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
+$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
 $dbh->do("create table cgiapp_lang (lang)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('test1', 'en', 't/templ/test.tmpl', 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('test2', 'en', 't/templ/test.tmpl', 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, template, home, path) values('en/404', 'en', 't/templ/testN.tmpl', 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
 $dbh->do("insert into  cgiapp_lang (lang) values('en')");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/test.tmpl', NULL)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/test.tmpl', NULL)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testN.tmpl', NULL)");
 
 use CGI;
 use TestApp;

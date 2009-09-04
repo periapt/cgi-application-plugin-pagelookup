@@ -153,7 +153,19 @@ to find some template structure like this:
 </html>
 The priority, lastmod and changefreq columns are used in XML sitemaps as defined by http://www.sitemaps.org/protocol.php.
 The changefreq field is also used in setting the expiry header. Since these fields are not expected to be in general usage,
-by default they are deleted just before being sent to the template.
+by default they are deleted just before being sent to the template. The lineage and rank columns are used by menu/sitemap 
+functionality and together should be unique.
+
+Table: cgiapp_structure
+Field       |Type                                                               |Null|Key |Default|Extra|
+--------------------------------------------------------------------------------------------------------
+internalId  |unsigned numeric(10,0)						|NO  |PRI |NULL   |     |
+template    |varchar(20)                                                        |NO  |    |NULL   |     |
+lastmod     |date                                                               |NO  |    |NULL   |     |
+changefreq  |enum('always','hourly','daily','weekly','monthly','yearly','never')|NO  |    |NULL   |     |
+priority    |decimal(3,3)                                                       |YES |    |NULL   |     |
+lineage     |varchar(255)							|NO  |    |NULL   |	|
+rank	    |unsigned numeric(10,0)						|NO  |    |NULL   |	|
 
 Table: cgiapp_pages
 Field       |Type                                                               |Null|Key |Default|Extra|
@@ -161,10 +173,6 @@ Field       |Type                                                               
 pageId      |varchar(255)                                                       |NO  |UNI |NULL   |     |
 lang        |varchar(2)								|NO  |PRI |NULL   |     |
 internalId  |unsigned numeric(10,0)						|NO  |PRI |NULL   |     |
-template    |varchar(20)                                                        |NO  |    |NULL   |     |
-lastmod     |date                                                               |NO  |    |NULL   |     |
-changefreq  |enum('always','hourly','daily','weekly','monthly','yearly','never')|NO  |    |NULL   |     |
-priority    |decimal(3,3)                                                       |YES |    |NULL   |     |
 + any custom columns that the web application might require.
 
 Table: cgiapp_lang
@@ -224,7 +232,7 @@ expiry header based upon the changefreq column.
 =item remove
 
 This points to an array ref of fields that are not expected to be required by the template. 
-It defaults to template, lastmod, changefreq, priority, pageId and internalId.
+It defaults to template, pageId and internalId, changefreq.
 
 =item objects
 
@@ -310,7 +318,7 @@ sub pagelookup_config {
    $args{prefix} = "cgiapp_" unless exists $args{prefix};
    $args{handle_notfound} = 1 unless exists $args{handle_notfound};
    $args{expiry} = 1 unless exists $args{expiry};
-   $args{remove} = ['template', 'lastmod', 'changefreq', 'priority', 'pageId', 'internalId'] unless exists $args{remove};
+   $args{remove} = ['template', 'pageId', 'internalId', 'changefreq'] unless exists $args{remove};
    $args{objects} = {} unless exists $args{objects};
    $args{template_params} = {} unless exists $args{template_params};
    $args{default_lang} = 'en' unless exists $args{default_lang};
@@ -372,7 +380,7 @@ sub pagelookup_sql {
    my $self = shift;
    my $page_id = shift;
    my $prefix = $self->pagelookup_prefix(@_);
-   return "SELECT * FROM ${prefix}pages p, ${prefix}lang l WHERE p.lang = l.lang AND p.pageId = '$page_id'";
+   return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p, ${prefix}lang l, ${prefix}structure s WHERE p.lang = l.lang AND p.pageId = '$page_id' AND p.internalId = s.internalId";
 }
 
 =head2 pagelookup 
@@ -597,7 +605,7 @@ This returns the SQL used to get the XML sitemap data.
 sub xml_sitemap_sql {
    my $self = shift;
    my $prefix = $self->pagelookup_prefix(@_);
-   return "SELECT pageId, lastmod, changefreq, priority FROM ${prefix}pages WHERE priority IS NOT NULL ORDER BY priority DESC";
+   return "SELECT pageId, lastmod, changefreq, priority FROM ${prefix}pages p, ${prefix}structure s WHERE priority IS NOT NULL AND p.internalId = s.internalId ORDER BY priority DESC";
 }
 
 =head2 xml_sitemap_base_url

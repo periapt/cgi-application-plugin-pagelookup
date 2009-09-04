@@ -31,7 +31,7 @@ sub cgiapp_init {
 	# use the same args as DBI->connect();
 	$self->dbh_config("dbi:SQLite:t/dbfile","","");
 
-	my %params = (remove=>['lang', 'template', 'pageId']);
+	my %params = (remove=>['lang', 'template', 'pageId', 'internalId', 'changefreq']);
 	$params{prefix} = $self->param('prefix') if $self->param('prefix');
 	$params{remove} = $self->param('remove') if $self->param('remove');
 	if ($self->param('notfound_stuff')) {
