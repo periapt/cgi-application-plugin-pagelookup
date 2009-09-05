@@ -22,11 +22,9 @@ our $AUTOLOAD;
 The L<CGI::Application::Plugin::PageLookup::Loop> module can be used to create a database driven menu 
 and similarly data driven site map page. However the Loop module can only translate into other languages
 if the URLs are kept the same apart from a language identifier. This means that the website
-would have  search engine friendly in only one language.
-The L<CGI::Application::Plugin::PageLookup::Href> module
+would have  search engine friendly in only one language. The L<CGI::Application::Plugin::PageLookup::Href> module
 could be used to create a static menu and site map that is automatically translated into various languages
-with search engine friendly URLs.
-However they cannot be combined as you cannot pass through first the Loop and then the Href.
+with search engine friendly URLs. However they cannot be combined as you cannot pass through first the Loop and then the Href.
 What this module offers is a specialized variant of the Loop smart object that does combine these features.
 This module depends on L<CGI::Application::Plugin::PageLookup>.
 
@@ -35,19 +33,19 @@ This module depends on L<CGI::Application::Plugin::PageLookup>.
 In the template you might define a menu as follows (with some CSS and javascript to make it look nice):
 
     <ul>
-    <TMPL_LOOP NAME="loop.menu">
+    <TMPL_LOOP NAME="menu.structure('title')">
 	<li>
-		<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="this.href1">"><TMPL_VAR NAME="this.atitle1"></a>
-		<TMPL_IF NAME="submenu1">
+		<a href="<TMPL_VAR NAME="this.pageid">"><TMPL_VAR NAME="this.title"></a>
+		<TMPL_IF NAME="this.structure('title')">
 		<ul>
-		<TMPL_LOOP NAME="submenu1">
+		<TMPL_LOOP NAME="this.structure('title')">
 			<li>
-				<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="href2">"><TMPL_VAR NAME="atitle2"></a>
-				<TMPL_IF NAME="submenu2">
+				<a href="/<TMPL_VAR NAME="this.pageid">"><TMPL_VAR NAME="this.title"></a>
+				<TMPL_IF NAME="this.structure('title')">
 				<ul>
-				<TMPL_LOOP NAME="submenu2">
+				<TMPL_LOOP NAME="this.structure('title')">
 				<li>
-					<a href="<TMPL_VAR NAME="lang">/<TMPL_VAR NAME="href3">"><TMPL_VAR NAME="atitle3"></a>
+					<a href="/<TMPL_VAR NAME="this.pageid">"><TMPL_VAR NAME="this.title"></a>
 				</li>
 				</TMPL_LOOP>
 				</ul>
@@ -61,8 +59,7 @@ In the template you might define a menu as follows (with some CSS and javascript
     </ul>
 
 and the intention is that this should be the same on all English pages, the same on all Vietnamese pages etc etc.
-The use of "this." below the top levels is dictated by L<HTML::Template::Plugin::Dot> which also optionally allows
-renaming of this implicit variable. You must register the "loop" parameter as a CGI::Application::Plugin::PageLookup::Menu object as follows:
+You must register the "menu" parameter as a CGI::Application::Plugin::PageLookup::Menu object as follows:
 
     use CGI::Application;
     use CGI::Application::Plugin::PageLookup qw(:all);
@@ -84,50 +81,50 @@ renaming of this implicit variable. You must register the "loop" parameter as a 
                 objects =>
                 {
                         # Register the 'values' parameter
-                        loop => 'CGI::Application::Plugin::PageLookup::Menu',
+                        menu => 'CGI::Application::Plugin::PageLookup::Menu',
 		},
-
-		# Processing of the 'lang' parameter inside a loop requires global_vars = 1 inside the template infrastructure
-		template_params => {global_vars => 1}
 
 	);
     }
 
+=head1 NOTES
 
-    ...
+=over
 
-The astute reader will notice that the above will only work if you set the 'global_vars' to true. After that all that remains is to populate
-the cgiapp_loops table with the appropriate values. To fill the above menu you might run the following SQL:
+=item
 
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'href1', '')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 0, 'atitle1', 'Home page')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'href1', 'aboutus')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 1, 'atitle1', 'About us')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'href1', 'products')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 2, 'atitle1', 'Our products')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'href1', 'contactus')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 3, 'atitle1', 'Contact us')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'href1', 'sitemap')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'menu', '', 4, 'atitle1', 'Sitemap')
+This module requires no extra table but it does depend on the 'lineage' and 'rank' columns in the
+cgiapp_strcuture table. These columns work the same way as they do in the cgiapp_loops table.
+That is the items are ordered according to the rank column and the lineage column is a comma separated
+list indicating the ranks of the parent menu items.
 
-Now suppose that you need to describe the products in more detail. Then you might add the following rows:
+=item 
 
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'href2', 'wodgets')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 0, 'atitle2', 'Finest wodgets')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'href2', 'bladgers')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 1, 'atitle2', 'Delectable bladgers')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'href2', 'spodges')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu1', '2', 2, 'atitle2', 'Exquisite spodges')
-	
-Now suppose that the bladger market is hot, and we need to further subdivide our menu. Then you might add the following rows:
+The module can be used to get data either for menus or human readable sitemaps.
 
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'href3', 'bladgers/runcible')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 0, 'atitle3', 'Runcible bladgers')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'href3', 'bladgers/collapsible')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 1, 'atitle3', 'Collapsible bladgers')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'href3', 'bladgers/goldplated')
-	INSERT INTO cgiapp_loops (lang, loopName, lineage, rank, param, value) VALUES ('en', 'submenu2', '2,1', 2, 'atitle3', 'Gold plated bladgers')
+=item 
 
+One value that will always be returned is the 'pageId' column which can be translated into a URL as dictated
+by the website's policy. However due to capitalization issues, you must either call it 'pageid' in the template 
+or specify 'case_sensitive => 1' somewhere in the template infrastructure.
+
+=item
+
+Use of this module for creating menus and sitemaps rather than the Loop module also means you may
+not need to set 'globalvars => 1' in the template infrastructure.
+
+=item
+
+You can specify additional columns from the cgiapp_pages table to be included the parameters. These could include 
+a title, may be some javascript etc. These columns are not specified in the core database spec.
+
+=item
+
+In the synopsis all parameters below the headline structure call were shown as being "this dot something". In accordance
+with L<HTML::Template::Plugin::Dot> this can be changed by using ":" notation. This has not actually been tested yet.
+Nor have we tried testing varying the arguments at different levels of the menu structure. 
+
+=back
 
 =head1 FUNCTIONS
 
@@ -153,6 +150,9 @@ sub new {
 
 =head2 structure
 
+This function is specified in the template where additional columns are specified. 
+If no arguments are specified only the 'pageId' column is returned for each menu item.
+Additional arguments should be specified as a single comma separated string.
 
 =cut
 
@@ -167,7 +167,7 @@ sub structure {
 
 	# $tlineage are the "breadcrumbs" required to navigate our way through the HTML::Template structure.
 	# It corresponds to the ARRAY ref used in $template->query(loop=> [....]) only that the
-	# post "dot" string of the final array member (aka $loopname) is missing.
+	# post "dot" string of the final array member (aka structure('$param')) is missing.
 	my $tlineage = shift;
 	$tlineage = [$self->{name}] unless defined $tlineage;
 
@@ -180,8 +180,14 @@ sub structure {
 
 	$self->{work_to_be_done} = [] unless exists $self->{work_to_be_done};
 
-	my $param_sql = join("", map {$_ =", p2.$_"} (split "," , $param));
+	# generate SQL: get menu structure but optionally pull extra columns from cgiapp_pages
+	my @params = split /,/ , $param;
+	foreach my $p (@params) {
+		$p = ", p2.$p";
+	}
+	my $param_sql = join "", @params;
         my $sql = "SELECT s.rank, p2.pageId $param_sql FROM ${prefix}structure s, ${prefix}pages p2, ${prefix}pages p1 WHERE p1.lang = p2.lang AND s.internalId = p2.internalId AND p1.pageId = '$page_id' AND s.lineage = '$dlineage' ORDER BY s.rank ASC";
+
 	# First one pass over the loop
         my $sth = $dbh->prepare($sql) || croak $dbh->errstr;
         $sth->execute || croak $dbh->errstr;
