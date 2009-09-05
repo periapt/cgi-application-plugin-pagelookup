@@ -128,9 +128,9 @@ my $html=<<EOS
 </html>
 EOS
 ;
-
+	local $params->{pageid} = 'en/loop1';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop1'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -179,8 +179,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/loop2';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop2'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -247,8 +248,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/loop3';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop3'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -332,8 +334,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/loop4';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/loop4'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},

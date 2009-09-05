@@ -16,7 +16,7 @@ unlink "t/dbfile";
 
 my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
 $dbh->do("create table cgiapp_pages (pageId, lang, internalId, title)");
-$dbh->do("create table cgiapp_structure (internalId, template, changefreq, lineage, rank)");
+$dbh->do("create table cgiapp_structure (internalId, template, changefreq, priority, lineage, rank)");
 $dbh->do("create table cgiapp_lang (lang, collation)");
 $dbh->do("create table cgiapp_values (lang, internalId, param, value)");
 $dbh->do("create table cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value)");
@@ -44,17 +44,17 @@ $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, title) values('de
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, title) values('de/hund/jagdhund/ariege', 'de', 10, 'Braque de l&rsquo;Ari&egrave;ge')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(0,'t/templ/testM.tmpl', 'daily', '', 0)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(1,'t/templ/testM.tmpl', 'daily', '', 1)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(2,'t/templ/testM.tmpl', 'daily', '', 2)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(3,'t/templ/testM.tmpl', 'daily', '', 3)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(4,'t/templ/testM.tmpl', 'daily', '2', 0)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(5,'t/templ/testM.tmpl', 'daily', '2', 1)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(6,'t/templ/testM.tmpl', 'daily', '1', 0)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(7,'t/templ/testM.tmpl', 'daily', '1', 1)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(8,'t/templ/testM.tmpl', 'daily', '1', 2)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(9,'t/templ/testM.tmpl', 'daily', '1,0', 0)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, lineage, rank) values(10,'t/templ/testM.tmpl', 'daily', '1,2', 0)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(0,'t/templ/testM.tmpl', 'daily', 1, '', 0)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(1,'t/templ/testM.tmpl', 'daily', 1, '', 1)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(2,'t/templ/testM.tmpl', 'daily', 1, '', 2)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(3,'t/templ/testM.tmpl', 'daily', 1, '', 3)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(4,'t/templ/testM.tmpl', 'daily', 1, '2', 0)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(5,'t/templ/testM.tmpl', 'daily', 1, '2', 1)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(6,'t/templ/testM.tmpl', 'daily', 1, '1', 0)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(7,'t/templ/testM.tmpl', 'daily', 1, '1', 1)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(8,'t/templ/testM.tmpl', 'daily', 1, '1', 2)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(9,'t/templ/testM.tmpl', 'daily', 1, '1,0', 0)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq, priority, lineage, rank) values(10,'t/templ/testM.tmpl', 'daily', 1, '1,2', 0)");
 
 use CGI;
 use TestApp;
@@ -177,8 +177,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/rabbit';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/rabbit'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -273,8 +274,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'de/kaninchen';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/kaninchen'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},

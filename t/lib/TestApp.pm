@@ -7,6 +7,7 @@ use CGI::Application;
 @TestApp::ISA = qw(CGI::Application);
 use CGI::Application::Plugin::DBH (qw/dbh_config dbh/);
 use CGI::Application::Plugin::PageLookup (qw/:all/);
+use CGI::Application::Plugin::Forward;
 
 sub setup {
         my $self = shift;

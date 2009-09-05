@@ -30,6 +30,7 @@ use CGI;
 use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
+my $params = {prefix=>'blah_'};
 
 sub response_like {
         my ($app, $header_re, $body_re, $comment) = @_;
@@ -43,7 +44,7 @@ sub response_like {
 }
 
 {
-        my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>{prefix=>'blah_'});
+        my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
         isa_ok($app, 'CGI::Application');
 
         response_like(
@@ -67,8 +68,9 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{prefix=>'blah_'});
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'test1'}));
+        local $params->{pageid} = 'test1';
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Encoding: utf-8|Content-Type: text/html; charset=utf-8$},
@@ -90,8 +92,9 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new(PARAMS=>{prefix=>'blah_'});
-        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'test2'}));
+        local $params->{pageid} = 'test2';
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query(CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Encoding: utf-8|Content-Type: text/html; charset=utf-8$},

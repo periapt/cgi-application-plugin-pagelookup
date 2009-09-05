@@ -467,7 +467,7 @@ Of course most of the work is done by pagelookup.
 
 sub pagelookup_rm {
    my $self = shift;
-   my $page_id = $self->query->param('pageid') || return $self->forward($self->start_mode());
+   my $page_id = $self->param('pageid') || return $self->forward($self->start_mode());
    my $template = $self->pagelookup($page_id);
    croak "no template returned: $page_id" unless $template;
    return $template->output;

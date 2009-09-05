@@ -71,8 +71,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/test1';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/test1'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -94,8 +95,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/test2';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/test2'}));
+        $app->query(CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -118,8 +120,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'de/test1';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/test1'}));
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -141,8 +144,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'de/test2';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/test2'}));
+        $app->query(CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -166,8 +170,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'en/test3';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'en/test3'}));
+        $app->query(CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Status: 404\|Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -191,8 +196,9 @@ my $html=<<EOS
 EOS
 ;
 
+	local $params->{pageid} = 'de/test3';
         my $app = TestApp->new(PARAMS=>$params);
-        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'de/test3'}));
+        $app->query(CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Status: 404\|Expires: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Date: \w\w\w, \d?\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d \w\w\w\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},

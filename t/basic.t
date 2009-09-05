@@ -31,6 +31,7 @@ use CGI;
 use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
+my $params = {};
 
 sub response_like {
         my ($app, $header_re, $body_re, $comment) = @_;
@@ -68,8 +69,9 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new();
-        $app->query( CGI->new({'rm' => 'pagelookup_rm', pageid=>'test1'}));
+	local $params->{pageid} = 'test1';
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query( CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
@@ -91,7 +93,8 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new();
+	local $params->{pageid} = 'test2';
+        my $app = TestApp->new(PARAMS=>$params);
         $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'test2'}));
         response_like(
                 $app,
@@ -116,8 +119,9 @@ my $html=<<EOS
 EOS
 ;
 
-        my $app = TestApp->new();
-        $app->query(CGI->new({'rm' => 'pagelookup_rm', pageid=>'test3'}));
+	local $params->{pageid} = 'test3';
+        my $app = TestApp->new(PARAMS=>$params);
+        $app->query(CGI->new({'rm' => 'pagelookup_rm'}));
         response_like(
                 $app,
                 qr{^Status: 404\|Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},

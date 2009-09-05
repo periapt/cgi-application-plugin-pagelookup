@@ -186,7 +186,7 @@ sub structure {
 		$p = ", p2.$p";
 	}
 	my $param_sql = join "", @params;
-        my $sql = "SELECT s.rank, p2.pageId $param_sql FROM ${prefix}structure s, ${prefix}pages p2, ${prefix}pages p1 WHERE p1.lang = p2.lang AND s.internalId = p2.internalId AND p1.pageId = '$page_id' AND s.lineage = '$dlineage' ORDER BY s.rank ASC";
+        my $sql = "SELECT s.rank, p2.pageId $param_sql FROM ${prefix}structure s, ${prefix}pages p2, ${prefix}pages p1 WHERE p1.lang = p2.lang AND s.internalId = p2.internalId AND p1.pageId = '$page_id' AND s.lineage = '$dlineage' AND s.priority IS NOT NULL ORDER BY s.rank ASC";
 
 	# First one pass over the loop
         my $sth = $dbh->prepare($sql) || croak $dbh->errstr;
