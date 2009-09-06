@@ -391,7 +391,7 @@ arguments overriding the default config. Then the sequence of events is as follo
 2.) If this fails then exit either handling or just returning undef according to instructions.
 3.) Load the template object.
 4.) Set the expiry header unless instructed not to.
-5.) Load the smart objects.
+5.) Load the smart objects that are mentioned in the template.
 6.) Remove unwanted parameters.
 7.) Put the parameters into the template object.
 8.) Return the now partially or completely filled template object.
@@ -423,11 +423,20 @@ sub pagelookup {
    # Load the template
    my $template = $self->load_tmpl($hash_ref->{template}, %{$args{template_params}});
 
+   # Get a list of smart objects mentioned in the template
+   my %smart_objects_actually_used = ();
+   foreach my $o ($template->query()) {
+	if ($o =~ /^([a-zA-Z_]\w+)\./) {
+		$smart_objects_actually_used{$1} = 1;
+	}
+   }
+
    # Set the expiry headers
    $self->pagelookup_set_expiry($hash_ref, @inargs) if $args{expiry};
 
    # create the smart objects
    foreach my $okey (keys %{$args{objects}}) {
+	next unless $smart_objects_actually_used{$okey};
 	my $ovalue = $args{objects}->{$okey};
 	my $object = undef;
 
