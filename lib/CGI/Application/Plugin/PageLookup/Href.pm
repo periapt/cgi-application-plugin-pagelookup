@@ -136,7 +136,7 @@ This way URLs can be search engine friendly irrespective of language.
 
 sub refer {
         my $self = shift;
-        my $internalid = shift;
+        my $internalid = shift || 0;
         my $prefix = $self->{cgiapp}->pagelookup_prefix(%{$self->{config}});
         my $page_id = $self->{page_id};
         my $dbh = $self->{cgiapp}->dbh;

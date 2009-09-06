@@ -130,7 +130,7 @@ This module depends on only one extra table: cgiapp_loops. The lang and internal
 the cgiapp_table. However the internalId column can null, making the parameter available to all pages
 in the same language. The key is formed by all of the columns except for the value.
 
-Table: cgiapp_values
+Table: cgiapp_loops
 Field       |Type                                                               |Null|Key |Default|Extra|
 --------------------------------------------------------------------------------------------------------
 lang        |varchar(2)                                                         |NO  |    |NULL   |     |
