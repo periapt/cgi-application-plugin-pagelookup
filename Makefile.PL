@@ -13,6 +13,9 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
 	'CGI::Application' => 0,
+	'CGI::Application::Plugin::Forward' => 0,
+	'CGI::Application::Plugin::DBH' => 0,
+	'HTML::Template::Pluggable'=>0,
         'Test::More' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
