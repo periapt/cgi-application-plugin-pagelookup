@@ -131,15 +131,16 @@ the cgiapp_table. However the internalId column can null, making the parameter a
 in the same language. The key is formed by all of the columns except for the value.
 
 Table: cgiapp_loops
-Field       |Type                                                               |Null|Key |Default|Extra|
---------------------------------------------------------------------------------------------------------
-lang        |varchar(2)                                                         |NO  |    |NULL   |     |
-internalId  |unsigned numeric(10,0)                                             |YES |    |NULL   |     |
-loopName    |varchar(20)							|NO  |    |NULL	  |     |
-lineage	    |varchar(255)							|NO  |    |       |     |
-rank	    |unsigned numeric(2,0)						|NO  |	  |0      |     |
-param       |varchar(20)                                                        |NO  |    |NULL   |     |
-value       |text								|NO  |    |NULL   |     |
+
+ Field        Type                                                                Null Key  Default Extra|
+ ------------ ------------------------------------------------------------------- ---- ---- ------- -----
+ lang         varchar(2)                                                          NO        NULL          
+ internalId   unsigned numeric(10,0)                                              YES       NULL          
+ loopName     varchar(20)							  NO        NULL          
+ lineage      varchar(255)							  NO                      
+ rank	      unsigned numeric(2,0)						  NO   	    0             
+ param        varchar(20)                                                         NO        NULL          
+ value        text								  NO        NULL          
 
 The loopName is the parameter name of the TMPL_LOOP structure. The rank indicates which iteration of the loop
 this row is instantiating. The lineage is a comma separated list of ranks so that we know what part of a nested

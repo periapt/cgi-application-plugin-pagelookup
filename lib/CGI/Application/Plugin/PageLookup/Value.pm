@@ -76,12 +76,13 @@ the cgiapp_table. However the internalId column can null, making the parameter a
 in the same language. The lang, internalId and param columns form the key of the table.
 
 Table: cgiapp_values
-Field       |Type                                                               |Null|Key |Default|Extra|
---------------------------------------------------------------------------------------------------------
-lang        |varchar(2)                                                         |NO  |    |NULL   |     |
-internalId  |unsigned numeric(10,0)                                             |YES |    |NULL   |     |
-param       |varchar(20)                                                        |NO  |    |NULL   |     |
-value       |text								|NO  |    |NULL   |     |
+
+ Field         Type                                                                Null Key  Default Extra 
+ ------------  ------------------------------------------------------------------- ---- ---- ------- -----
+ lang          varchar(2)                                                          NO        NULL          
+ internalId    unsigned numeric(10,0)                                              YES       NULL          
+ param         varchar(20)                                                         NO        NULL          
+ value         text								   NO        NULL          
 
 =head1 FUNCTIONS
 
