@@ -43,7 +43,7 @@ our $VERSION = '1.0';
 =head1 DESCRIPTION
 
 A model component for CGI::Application built around a table that has one row for each
-page and that provides aupport for multiple languages and the 'dot' notation in templates.
+page and that provides support for multiple languages and the 'dot' notation in templates.
 
 =head1 SYNOPSIS
 

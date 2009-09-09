@@ -156,7 +156,7 @@ sub AUTOLOAD {
 	return undef;
 }
 
-=head2 DESTRROY
+=head2 DESTROY
 
 We have to define DESTROY, because an autoloaded version would be bad.
 
