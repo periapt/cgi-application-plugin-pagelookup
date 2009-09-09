@@ -1,4 +1,3 @@
-t/request.t
 t/values.t
 t/loops.t
 t/basic.t
@@ -36,4 +35,6 @@ lib/CGI/Application/Plugin/PageLookup/Loop.pm
 lib/CGI/Application/Plugin/PageLookup/Href.pm
 lib/CGI/Application/Plugin/PageLookup/Value.pm
 README
+pod2htmi.tmp
+pod2htmd.tmp
 Makefile.PL
