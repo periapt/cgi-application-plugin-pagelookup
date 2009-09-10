@@ -15,4 +15,5 @@ Revision history for CGI-Application-Plugin-PageLookup
 1.1	09-09-2009
 	Fixed dependency and documentation issues
 
-
+1.2	????
+	We depend on CGI:Application 4.31. 
