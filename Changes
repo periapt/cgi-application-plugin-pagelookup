@@ -16,4 +16,4 @@ Revision history for CGI-Application-Plugin-PageLookup
 	Fixed dependency and documentation issues
 
 1.2	????
-	We depend on CGI:Application 4.31. 
+	We depend on CGI:Application 4.31. Removed the need to declare smart objects.

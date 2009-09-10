@@ -43,7 +43,6 @@ use CGI;
 use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
-use CGI::Application::Plugin::PageLookup::Value;
 my $params = {remove=>['template','pageId','internalId','priority','lastmod','changefreq'],notfound_stuff=>1,xml_sitemap_base_url=>'http://xml/', 
 	objects=>{
 		test1=>'CGI::Application::Plugin::PageLookup::Value',

@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use CGI::Application::Plugin::Forward;
 use Carp;
+use UNIVERSAL::require;
 use base qw(Exporter);
 use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 # Items to export into callers namespace by default. Note: do not export
@@ -453,6 +454,7 @@ sub pagelookup {
 	}
 	else {
 		$object = eval {
+			$ovalue->require;
 			return $ovalue->new($self, $page_id, $template, $okey, @inargs);
 		};
 		croak "Could not create smart object: $okey: $@" if $@;

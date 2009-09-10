@@ -2,13 +2,9 @@
 
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 9;
 use Test::Differences;
 use lib qw(t/lib);
-
-BEGIN {
-	use_ok( 'CGI::Application::Plugin::PageLookup::Href' );
-}
 
 use DBI;
 unlink "t/dbfile";
@@ -42,7 +38,6 @@ use CGI;
 use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
-use CGI::Application::Plugin::PageLookup::Value;
 my $params = {remove=>['template','pageId','internalId','changefreq'], 
 	template_params=>{global_vars=>1},
 	objects=>{
