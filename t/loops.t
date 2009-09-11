@@ -81,7 +81,6 @@ $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, p
 $dbh->do("INSERT INTO cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value) VALUES ('en', 3, 'submenu2', '2,1', 2, 'atitle3', 'Gold-plated bladgers')");
 
 use CGI;
-use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
 my $params = {remove=>['template','pageId','internalId','changefreq'], 
@@ -102,6 +101,14 @@ sub response_like {
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
 
+SKIP: {
+	eval { require HTML::Template::Pluggable;};
+	skip "HTML::Template::Pluggable required", 11 if $@; 
+	eval { require UNIVERSAL::require;};
+	skip "UNIVERSAL::require required", 11 if $@; 
+	eval { require TestApp;};
+	skip "TestApp required", 11 if $@; 
+	
 {
         my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
         isa_ok($app, 'CGI::Application');
@@ -341,4 +348,4 @@ EOS
 }
 
 
-
+}

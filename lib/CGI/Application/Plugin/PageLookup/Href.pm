@@ -10,11 +10,11 @@ CGI::Application::Plugin::PageLookup::Href - Manage internal URLs
 
 =head1 VERSION
 
-Version 1.2
+Version 1.3
 
 =cut
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION
@@ -80,7 +80,7 @@ You must register the "href" parameter as a CGI::Application::Plugin::PageLookup
 
 =head2 new
 
-A constructor folowing the requirements set out in L<CGI::Application::Plugin::PageLookup>.
+A constructor following the requirements set out in L<CGI::Application::Plugin::PageLookup>.
 
 =cut
 

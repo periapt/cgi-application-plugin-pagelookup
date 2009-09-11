@@ -9,17 +9,17 @@ CGI::Application::Plugin::PageLookup::Value - Manage values scattered across a w
 
 =head1 VERSION
 
-Version 1.2
+Version 1.3
 
 =cut
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION
 
 This module allows the management of template variable instantiation across a website.
-You can specialize a default value for a parameter (without requiring it to be used on every page)
+You can specialise a default value for a parameter (without requiring it to be used on every page)
 and override that value for specific pages. Or you can merely set the value for individual pages.
 This depends on L<CGI::Application::Plugin::PageLookup>. For loops see L<CGI::Application::Plugin::PageLookup::Loop>.
 
@@ -88,7 +88,7 @@ Table: cgiapp_values
 
 =head2 new
 
-A constructor folowing the requirements set out in L<CGI::Application::Plugin::PageLookup>.
+A constructor following the requirements set out in L<CGI::Application::Plugin::PageLookup>.
 
 =cut
 

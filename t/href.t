@@ -35,7 +35,6 @@ $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values
 
 
 use CGI;
-use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
 my $params = {remove=>['template','pageId','internalId','changefreq'], 
@@ -44,6 +43,7 @@ my $params = {remove=>['template','pageId','internalId','changefreq'],
 		href=>'CGI::Application::Plugin::PageLookup::Href'
 	}
 };
+
 
 sub response_like {
         my ($app, $header_re, $body_re, $comment) = @_;
@@ -56,6 +56,14 @@ sub response_like {
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
 
+SKIP: {
+	eval { require HTML::Template::Pluggable;};
+	skip "HTML::Template::Pluggable required", 9 if $@; 
+	eval { require UNIVERSAL::require;};
+	skip "UNIVERSAL::require required", 9 if $@; 
+	eval { require TestApp;};
+	skip "TestApp required", 9 if $@; 
+	
 {
         my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
         isa_ok($app, 'CGI::Application');
@@ -156,4 +164,4 @@ EOS
 }
 
 
-
+}

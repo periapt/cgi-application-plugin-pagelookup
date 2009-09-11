@@ -6,15 +6,15 @@ use Carp;
 
 =head1 NAME
 
-CGI::Application::Plugin::PageLookup::Menu - Support for consistent menus across a multilanguage website
+CGI::Application::Plugin::PageLookup::Menu - Support for consistent menus across a multilingual website
 
 =head1 VERSION
 
-Version 1.2
+Version 1.3
 
 =cut
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION
@@ -25,7 +25,7 @@ if the URLs are kept the same apart from a language identifier. This means that 
 would have  search engine friendly in only one language. The L<CGI::Application::Plugin::PageLookup::Href> module
 could be used to create a static menu and site map that is automatically translated into various languages
 with search engine friendly URLs. However they cannot be combined as you cannot pass through first the Loop and then the Href.
-What this module offers is a specialized variant of the Loop smart object that does combine these features.
+What this module offers is a specialised variant of the Loop smart object that does combine these features.
 This module depends on L<CGI::Application::Plugin::PageLookup>.
 
 =head1 SYNOPSIS
@@ -105,7 +105,7 @@ The module can be used to get data either for menus or human readable sitemaps.
 =item 
 
 One value that will always be returned is the 'pageId' column which can be translated into a URL as dictated
-by the website's policy. However due to capitalization issues, you must either call it 'pageid' in the template 
+by the website policy. However due to capitalisation issues, you must either call it 'pageid' in the template 
 or specify 'case_sensitive => 1' somewhere in the template infrastructure.
 
 =item
@@ -130,7 +130,7 @@ Nor have we tried testing varying the arguments at different levels of the menu 
 
 =head2 new
 
-A constructor folowing the requirements set out in L<CGI::Application::Plugin::PageLookup>.
+A constructor following the requirements set out in L<CGI::Application::Plugin::PageLookup>.
 
 =cut
 

@@ -4,7 +4,6 @@ use warnings;
 use strict;
 use CGI::Application::Plugin::Forward;
 use Carp;
-use UNIVERSAL::require;
 use base qw(Exporter);
 use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 # Items to export into callers namespace by default. Note: do not export
@@ -31,15 +30,15 @@ use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 
 =head1 NAME
 
-CGI::Application::Plugin::PageLookup - Database driven model framework for CGI::Applicaition
+CGI::Application::Plugin::PageLookup - Database driven model framework for CGI::Application
 
 =head1 VERSION
 
-Version 1.2
+Version 1.3
 
 =cut
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 
 =head1 DESCRIPTION
 
@@ -232,7 +231,7 @@ because the pagelookup function will return undef.
 
 =item expiry
 
-If set (which it is by default), the pagelookup function will will set the appropriate
+If set (which it is by default), the pagelookup function will set the appropriate
 expiry header based upon the changefreq column.
 
 =item remove
@@ -242,11 +241,11 @@ It defaults to template, pageId and internalId, changefreq.
 
 =item objects
 
-This points to a hash ref. Each key is a paramater name (upto the dot). The value
+This points to a hash ref. Each key is a parameter name (upto the dot). The value
 is something that defines a smart object as described in L<HTML::Template::Plugin::Dot>.
 The point about a smart object is that usually it defines an AUTOLOAD function so if the template
 has <TMPL_VAR NAME="object.getcarter"> and the pagelookup_config has mapped object to some
-object $MySmartObject then the method $MySmartObject->getcarter() will be called. Alternaitively
+object $MySmartObject then the method $MySmartObject->getcarter() will be called. Alternatively
 there may be no AUTOLOAD function but the smart object may have methods that take additional arguments.
 This way the template can be much more decoupled from the structure of the database.
 
@@ -340,7 +339,7 @@ sub pagelookup_config {
 
 =head2 pagelookup_get_config 
 
-Returns config including any overrides passed in as aeguments.
+Returns config including any overrides passed in as arguments.
 
 =cut
 
@@ -453,6 +452,7 @@ sub pagelookup {
 		$object = $self->$ovalue($page_id, $template, $okey, @inargs);
 	}
 	else {
+		use UNIVERSAL::require;
 		$object = eval {
 			$ovalue->require;
 			return $ovalue->new($self, $page_id, $template, $okey, @inargs);
@@ -532,7 +532,7 @@ This function takes a page id which has failed a page lookup and tries to find t
 characters of the page id consists of two characters followed by a '/'. If this matches then the first
 two characters are taken to be the language. If that fails then the language is taken to be $self->pagelookup_default_lang.
 Then the page id of the relevant 404 page is taken to be [the language]+'/'+$self->pagelookup_404 . Having obtained a 
-a pgae id the page is looked up. Of course it is assumed that this page lookup cannot fail. The header  404 status is added
+a page id the page is looked up. Of course it is assumed that this page lookup cannot fail. The header  404 status is added
 to the header and the original page id is inserted into the $self->pagelookup_msg_param parameter.
 If this logic does not match your URL structure you can omit exporting this function or turn notfound handling off
 and implement your own logic.

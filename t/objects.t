@@ -30,7 +30,6 @@ $dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefre
 $dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(2,'t/templ/testNLO.tmpl', '2009-8-11', 'never', NULL)");
 
 use CGI;
-use TestApp;
 
 $ENV{CGI_APP_RETURN_ONLY} = 1;
 my $params = {remove=>['template','pageId','priority','internalId','lastmod','changefreq'],notfound_stuff=>1,xml_sitemap_base_url=>'http://xml/', 
@@ -55,6 +54,14 @@ sub response_like {
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
 
+SKIP: {
+	eval { require HTML::Template::Pluggable;};
+	skip "HTML::Template::Pluggable required", 15 if $@; 
+	eval { require UNIVERSAL::require;};
+	skip "UNIVERSAL::require required", 15 if $@; 
+	eval { require TestApp;};
+	skip "TestApp required", 15 if $@; 
+	
 {
         my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
         isa_ok($app, 'CGI::Application');
@@ -240,5 +247,6 @@ EOS
                 $html,
                 'TestApp, notfound'
         );
+}
 }
 

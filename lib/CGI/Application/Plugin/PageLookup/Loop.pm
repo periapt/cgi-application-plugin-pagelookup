@@ -9,11 +9,11 @@ CGI::Application::Plugin::PageLookup::Loop - Manage list structures in a website
 
 =head1 VERSION
 
-Version 1.2
+Version 1.3
 
 =cut
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION
@@ -150,7 +150,7 @@ loop structure this row instantiates. For a top-level parameter this will always
 
 =head2 new
 
-A constructor folowing the requirements set out in L<CGI::Application::Plugin::PageLookup>.
+A constructor following the requirements set out in L<CGI::Application::Plugin::PageLookup>.
 
 =cut
 
@@ -316,7 +316,7 @@ sub __populate_lower_loops {
 }
 
 
-=head2 DESTRROY
+=head2 DESTROY
 
 We have to define DESTROY, because an autoloaded version would be bad.
 
