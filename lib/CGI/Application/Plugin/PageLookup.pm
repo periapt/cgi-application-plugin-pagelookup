@@ -143,7 +143,9 @@ page and that provides support for multiple languages and the 'dot' notation in 
 
 =head1 DATABASE
 
-Something like the following schema is assumed. The exact types are not required and can be changed
+Something like the following schema is assumed. In general each column on these tables 
+corresponds to a template parameter that needs to be on every page on the website and each row in the join
+corresponds to a page on the website. The exact types are not required and can be changed
 but these are the recommended values. The lang and internalId columns combined should be as unique as the pageId 
 column. They are used to link the different language versions of the same page and also the page with 
 nearby pages in the same language. The lang column is used to join the two pages. The lang and collation fields expect
@@ -156,7 +158,9 @@ The changefreq field is also used in setting the expiry header. Since these fiel
 by default they are deleted just before being sent to the template. The lineage and rank columns are used by menu/sitemap 
 functionality and together should be unique.
 
-Table: cgiapp_structure
+=over
+
+=item Table: cgiapp_structure
 
  Field        Type                                                                Null Key  Default Extra 
  ------------ ------------------------------------------------------------------- ---- ---- ------- -----
@@ -165,10 +169,10 @@ Table: cgiapp_structure
  lastmod      date                                                                NO        NULL          
  changefreq   enum('always','hourly','daily','weekly','monthly','yearly','never') NO        NULL          
  priority     decimal(3,3)                                                        YES       NULL          
- lineage      varchar(255)                                                        NO        NULL    	 
- rank	      unsigned numeric(10,0)                                              NO        NULL    	 
+ lineage      varchar(255)                                                        NO   UNI  NULL    	 
+ rank	      unsigned numeric(10,0)                                              NO   UNI  NULL    	 
 
-Table: cgiapp_pages
+=item Table: cgiapp_pages
 
  Field        Type                                                                Null Key  Default Extra 
  ------------ ------------------------------------------------------------------- ---- ---- ------- -----
@@ -176,16 +180,18 @@ Table: cgiapp_pages
  lang         varchar(2)       	                                                  NO   PRI  NULL          
  internalId   unsigned numeric(10,0)                                              NO   PRI  NULL          
 
-+ any custom columns that the web application might require.
+ + any custom columns that the web application might require.
 
-Table: cgiapp_lang
+=item Table: cgiapp_lang
 
  Field        Type                                                                Null Key  Default Extra 
  ------------ ------------------------------------------------------------------- ---- ---- ------- -----
  lang         varchar(2)                                                          NO   PRI  NULL          
  collation    varchar(2)                                                          NO        NULL          
 
-+ any custom columns that the web application might require.
+ + any custom columns that the web application might require.
+
+=back
 
 =head1 EXPORT
 

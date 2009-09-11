@@ -75,14 +75,18 @@ This module depends on only one extra table: cgiapp_values. The lang and interna
 the cgiapp_table. However the internalId column can null, making the parameter available to all pages
 in the same language. The lang, internalId and param columns form the key of the table.
 
-Table: cgiapp_values
+=over 
+
+=item Table: cgiapp_values
 
  Field         Type                                                                Null Key  Default Extra 
  ------------  ------------------------------------------------------------------- ---- ---- ------- -----
- lang          varchar(2)                                                          NO        NULL          
- internalId    unsigned numeric(10,0)                                              YES       NULL          
- param         varchar(20)                                                         NO        NULL          
+ lang          varchar(2)                                                          NO   UNI  NULL          
+ internalId    unsigned numeric(10,0)                                              YES  UNI  NULL          
+ param         varchar(20)                                                         NO   UNI  NULL          
  value         text								   NO        NULL          
+
+=back
 
 =head1 FUNCTIONS
 
