@@ -20,3 +20,6 @@ Revision history for CGI-Application-Plugin-PageLookup
 
 1.3 	11-09-2009
 	Fixed more dependencies checking with Devel::Hide and Test::Prereq. Added podspell.t. Checked formatting 
+
+1.4	13-09-2009
+	Darn more missing dependencies???? Added changes.t and mainfest.t
