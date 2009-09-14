@@ -10,11 +10,11 @@ CGI::Application::Plugin::PageLookup::Href - Manage internal URLs
 
 =head1 VERSION
 
-Version 1.4
+Version 1.5
 
 =cut
 
-our $VERSION = '1.4';
+our $VERSION = '1.5';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION

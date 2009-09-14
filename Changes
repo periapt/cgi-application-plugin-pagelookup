@@ -23,3 +23,6 @@ Revision history for CGI-Application-Plugin-PageLookup
 
 1.4	13-09-2009
 	Darn more missing dependencies???? Added changes.t and mainfest.t
+
+1.5 	14-09-2009
+	Incorrect format in t/changes.t and t/manifest.t
