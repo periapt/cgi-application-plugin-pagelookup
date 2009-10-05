@@ -9,11 +9,11 @@ CGI::Application::Plugin::PageLookup::Value - Manage values scattered across a w
 
 =head1 VERSION
 
-Version 1.5
+Version 1.6
 
 =cut
 
-our $VERSION = '1.5';
+our $VERSION = '1.6';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION
