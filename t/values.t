@@ -3,28 +3,56 @@
 use strict;
 use warnings;
 use Test::More;
-
-eval { require DBD::SQLite; };
-
-if ( $@) {
-   my $msg = 'DBD::SQLite required to test code';
-   warn $msg;
-   done_testing( 1 );
-   exit(0);
-}
-
+use Test::Database;
 use Test::Differences;
 use lib qw(t/lib);
-use Carp;
+
+# get all available handles
+my @handles = Test::Database->handles('SQLite');
+
+# plan the tests
+plan tests => 2 + 15 * @handles;
 
 BEGIN {
-	use_ok( 'CGI::Application::Plugin::PageLookup' );
+        use_ok( 'HTML::Template' );
+        use_ok( 'CGI::Application::Plugin::PageLookup' );
 }
 
 use DBI;
-unlink "t/dbfile";
+use CGI;
+use TestApp;
 
-my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
+$ENV{CGI_APP_RETURN_ONLY} = 1;
+my $params = {remove=>['template','pageId','internalId','priority','lastmod','changefreq'],notfound_stuff=>1,xml_sitemap_base_url=>'http://xml/', 
+	objects=>{
+		test1=>'CGI::Application::Plugin::PageLookup::Value',
+		test2=>'CGI::Application::Plugin::PageLookup::Value',
+		test3=>'CGI::Application::Plugin::PageLookup::Value'
+	}
+};
+
+sub response_like {
+        my ($app, $header_re, $body_re, $comment) = @_;
+
+        local $ENV{CGI_APP_RETURN_ONLY} = 1;
+        my $output = $app->run;
+        my ($header, $body) = split /\r\n\r\n/m, $output;
+        $header =~ s/\r\n/|/g;
+        like($header, $header_re, "$comment (header match)");
+        eq_or_diff($body,      $body_re,       "$comment (body match)");
+}
+
+# run the tests
+for my $handle (@handles) {
+       diag "Testing with " . $handle->dbd();    # mysql, SQLite, etc.
+
+       # let $handle do the connect()
+       my $dbh = $handle->dbh();
+       if ($ENV{TEST_DATABASE_DROP}) {
+          goto DROP;
+       }
+       $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
+
 $dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
 $dbh->do("create table cgiapp_structure (internalId, template, lastmod, changefreq, priority)");
 $dbh->do("create table cgiapp_lang (lang, collation)");
@@ -49,35 +77,6 @@ $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de
 $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',1, 'jump', 'Wolken')");
 $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',2, 'jump', 'Blau')");
 
-use CGI;
-
-$ENV{CGI_APP_RETURN_ONLY} = 1;
-my $params = {remove=>['template','pageId','internalId','priority','lastmod','changefreq'],notfound_stuff=>1,xml_sitemap_base_url=>'http://xml/', 
-	objects=>{
-		test1=>'CGI::Application::Plugin::PageLookup::Value',
-		test2=>'CGI::Application::Plugin::PageLookup::Value',
-		test3=>'CGI::Application::Plugin::PageLookup::Value'
-	}
-};
-
-sub response_like {
-        my ($app, $header_re, $body_re, $comment) = @_;
-
-        local $ENV{CGI_APP_RETURN_ONLY} = 1;
-        my $output = $app->run;
-        my ($header, $body) = split /\r\n\r\n/m, $output;
-        $header =~ s/\r\n/|/g;
-        like($header, $header_re, "$comment (header match)");
-        eq_or_diff($body,      $body_re,       "$comment (body match)");
-}
-
-SKIP: {
-	eval { require HTML::Template::Pluggable;};
-	skip "HTML::Template::Pluggable required", 15 if $@; 
-	eval { require UNIVERSAL::require;};
-	skip "UNIVERSAL::require required", 15 if $@; 
-	eval { require TestApp;};
-	skip "TestApp required", 15 if $@; 
 	
 {
         my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
@@ -266,6 +265,10 @@ EOS
         );
 }
 
+DROP:  $dbh->do("drop table cgiapp_pages");
+       $dbh->do("drop table cgiapp_structure");
+       $dbh->do("drop table cgiapp_values");
+       $dbh->do("drop table cgiapp_lang");
 }
 
-done_testing(16);
+

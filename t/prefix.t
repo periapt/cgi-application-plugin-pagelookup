@@ -3,39 +3,22 @@
 use strict;
 use warnings;
 use Test::More;
-
-eval { require DBD::SQLite; };
-
-if ( $@) {
-   my $msg = 'DBD::SQLite required to test code';
-   warn $msg;
-   done_testing( 2 );
-   exit(0);
-}
-
+use Test::Database;
 use Test::Differences;
 use lib qw(t/lib);
 
+# get all available handles
+my @handles = Test::Database->handles('SQLite');
+
+# plan the tests
+plan tests => 2 + 7 * @handles;
+
 BEGIN {
-	use_ok( 'HTML::Template' );
-	use_ok( 'CGI::Application::Plugin::PageLookup' );
+        use_ok( 'HTML::Template' );
+        use_ok( 'CGI::Application::Plugin::PageLookup' );
 }
 
 use DBI;
-unlink "t/dbfile";
-
-my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table blah_pages (pageId, lang, internalId, home, path)");
-$dbh->do("create table blah_structure (internalId, template, changefreq)");
-$dbh->do("create table blah_lang (lang)");
-$dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
-$dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
-$dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
-$dbh->do("insert into  blah_lang (lang) values('en')");
-$dbh->do("insert into  blah_structure(internalId, template) values(0,'t/templ/test.tmpl')");
-$dbh->do("insert into  blah_structure(internalId, template) values(1,'t/templ/test.tmpl')");
-$dbh->do("insert into  blah_structure(internalId, template) values(2,'t/templ/testN.tmpl')");
-
 use CGI;
 use TestApp;
 
@@ -52,6 +35,29 @@ sub response_like {
         like($header, $header_re, "$comment (header match)");
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
+
+# run the tests
+for my $handle (@handles) {
+       diag "Testing with " . $handle->dbd();    # mysql, SQLite, etc.
+
+       # let $handle do the connect()
+       my $dbh = $handle->dbh();
+       if ($ENV{TEST_DATABASE_DROP}) {
+          goto DROP;
+       }
+       $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
+
+       $dbh->do("create table blah_pages (pageId, lang, internalId, home, path)");
+       $dbh->do("create table blah_structure (internalId, template, changefreq)");
+       $dbh->do("create table blah_lang (lang)");
+       $dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
+       $dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
+       $dbh->do("insert into  blah_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
+       $dbh->do("insert into  blah_lang (lang) values('en')");
+       $dbh->do("insert into  blah_structure(internalId, template) values(0,'t/templ/test.tmpl')");
+       $dbh->do("insert into  blah_structure(internalId, template) values(1,'t/templ/test.tmpl')");
+       $dbh->do("insert into  blah_structure(internalId, template) values(2,'t/templ/testN.tmpl')");
+
 
 {
         my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
@@ -113,4 +119,10 @@ EOS
         );
 }
 
-done_testing(9);
+
+DROP:  $dbh->do("drop table blah_pages");
+       $dbh->do("drop table blah_structure");
+       $dbh->do("drop table blah_lang");
+}
+
+

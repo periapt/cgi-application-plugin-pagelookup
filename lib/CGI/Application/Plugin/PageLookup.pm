@@ -685,6 +685,7 @@ L<http://search.cpan.org/dist/CGI-Application-Plugin-PageLookup/>
 
 =head1 ACKNOWLEDGEMENTS
 
+Thanks to JavaFan for suggesting the use of L<Test::Database>.
 
 =head1 COPYRIGHT & LICENSE
 

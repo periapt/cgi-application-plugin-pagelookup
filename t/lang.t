@@ -3,42 +3,22 @@
 use strict;
 use warnings;
 use Test::More;
-
-eval { require DBD::SQLite; };
-
-if ( $@) {
-   my $msg = 'DBD::SQLite required to test code';
-   warn $msg;
-   done_testing( 1 );
-   exit(0);
-}
-
+use Test::Database;
 use Test::Differences;
 use lib qw(t/lib);
 
+# get all available handles
+my @handles = Test::Database->handles('SQLite');
+
+# plan the tests
+plan tests => 2 + 15 * @handles;
+
 BEGIN {
-	use_ok( 'CGI::Application::Plugin::PageLookup' );
+        use_ok( 'HTML::Template' );
+        use_ok( 'CGI::Application::Plugin::PageLookup' );
 }
 
 use DBI;
-unlink "t/dbfile";
-
-my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
-$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
-$dbh->do("create table cgiapp_lang (lang, collation)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test1', 'en', 0, 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test2', 'en', 1, 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test1', 'de', 0, 'HEIMAT', 'Stra&szlig;e')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test2', 'de', 1, 'HEIMAT1', 'Stra&szlig;e1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/notfound', 'en', 2, 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/notfound', 'de', 2, 'HEIMAT', 'Stra&szlig;e3')");
-$dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
-$dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
-$dbh->do("insert into  cgiapp_structure(internalId, template) values(0,'t/templ/testL.tmpl')");
-$dbh->do("insert into  cgiapp_structure(internalId, template) values(1,'t/templ/testL.tmpl')");
-$dbh->do("insert into  cgiapp_structure(internalId, template) values(2,'t/templ/testNL.tmpl')");
-
 use CGI;
 use TestApp;
 
@@ -55,6 +35,33 @@ sub response_like {
         like($header, $header_re, "$comment (header match)");
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
+
+# run the tests
+for my $handle (@handles) {
+       diag "Testing with " . $handle->dbd();    # mysql, SQLite, etc.
+
+       # let $handle do the connect()
+       my $dbh = $handle->dbh();
+       if ($ENV{TEST_DATABASE_DROP}) {
+          goto DROP;
+       }
+       $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
+
+$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
+$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
+$dbh->do("create table cgiapp_lang (lang, collation)");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test1', 'en', 0, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test2', 'en', 1, 'HOME1', 'PATH1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test1', 'de', 0, 'HEIMAT', 'Stra&szlig;e')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test2', 'de', 1, 'HEIMAT1', 'Stra&szlig;e1')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/notfound', 'en', 2, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/notfound', 'de', 2, 'HEIMAT', 'Stra&szlig;e3')");
+$dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
+$dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
+$dbh->do("insert into  cgiapp_structure(internalId, template) values(0,'t/templ/testL.tmpl')");
+$dbh->do("insert into  cgiapp_structure(internalId, template) values(1,'t/templ/testL.tmpl')");
+$dbh->do("insert into  cgiapp_structure(internalId, template) values(2,'t/templ/testNL.tmpl')");
+
 
 {
         my $app = TestApp->new(QUERY => CGI->new(""), PARAMS=>$params);
@@ -216,4 +223,9 @@ EOS
         );
 }
 
-done_testing(16);
+DROP:  $dbh->do("drop table cgiapp_pages");
+       $dbh->do("drop table cgiapp_structure");
+       $dbh->do("drop table cgiapp_lang");
+}
+
+
