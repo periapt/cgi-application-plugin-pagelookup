@@ -30,7 +30,7 @@ sub basic_test {
 sub cgiapp_init {
         my $self = shift;
 	# use the same args as DBI->connect();
-	$self->dbh_config("dbi:SQLite:t/dbfile","","");
+	#$self->dbh_config("dbi:SQLite:t/dbfile","","");
 
 	my %params = (remove=>['lang', 'template', 'pageId', 'internalId', 'changefreq']);
 	$params{prefix} = $self->param('prefix') if $self->param('prefix');

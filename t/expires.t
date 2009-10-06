@@ -2,7 +2,17 @@
 
 use strict;
 use warnings;
-use Test::More tests => 18;
+use Test::More;
+
+eval { require DBD::SQLite; };
+
+if ( $@) {
+   my $msg = 'DBD::SQLite required to test code';
+   warn $msg;
+   done_testing( 1 );
+   exit(0);
+}
+
 use Test::Differences;
 use lib qw(t/lib);
 
@@ -254,5 +264,5 @@ EOS
         );
 }
 
-
+done_testing(18);
 

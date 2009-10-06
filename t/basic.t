@@ -2,9 +2,16 @@
 
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More;
+use Test::Database;
 use Test::Differences;
 use lib qw(t/lib);
+
+# get all available handles
+my @handles = Test::Database->handles('SQLite');
+
+# plan the tests
+plan tests => 2 + 9 * @handles;
 
 BEGIN {
 	use_ok( 'HTML::Template' );
@@ -12,21 +19,6 @@ BEGIN {
 }
 
 use DBI;
-unlink "t/dbfile";
-
-
-my $dbh = DBI->connect("dbi:SQLite:t/dbfile","","");
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
-$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
-$dbh->do("create table cgiapp_lang (lang)");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
-$dbh->do("insert into  cgiapp_lang (lang) values('en')");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/test.tmpl', NULL)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/test.tmpl', NULL)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testN.tmpl', NULL)");
-
 use CGI;
 use TestApp;
 
@@ -44,17 +36,40 @@ sub response_like {
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
 
-{
-        my $app = TestApp->new(QUERY => CGI->new(""));
-        isa_ok($app, 'CGI::Application');
+# run the tests
+for my $handle (@handles) {
+       diag "Testing with " . $handle->dbd();    # mysql, SQLite, etc.
 
-        response_like(
-                $app,
-                qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
-                "Hello World: basic_test",
-                'TestApp, blank query',
-        );
-}
+       # let $handle do the connect()
+       my $dbh = $handle->dbh();
+       if ($ENV{TEST_DATABASE_DROP}) {
+          goto DROP;
+       }
+       $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
+
+       $dbh->do("create table cgiapp_pages (pageId varchar(255), lang varchar(2), internalId int, home TEXT, path TEXT)");
+       $dbh->do("create table cgiapp_structure (internalId int, template varchar(20), changefreq varchar(20))");
+       $dbh->do("create table cgiapp_lang (lang varchar(2))");
+       $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
+       $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
+       $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
+       $dbh->do("insert into  cgiapp_lang (lang) values('en')");
+       $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/test.tmpl', NULL)");
+       $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/test.tmpl', NULL)");
+       $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testN.tmpl', NULL)");
+
+       {
+                my $app = TestApp->new(QUERY => CGI->new(""));
+               isa_ok($app, 'CGI::Application');
+
+                response_like(
+                        $app,
+                        qr{^Encoding: utf-8\|Content-Type: text/html; charset=utf-8$},
+                        "Hello World: basic_test",
+                        'TestApp, blank query',
+                );
+       }
+
 
 {
 my $html=<<EOS
@@ -131,3 +146,7 @@ EOS
 }
 
 
+DROP:  $dbh->do("drop table cgiapp_pages");
+       $dbh->do("drop table cgiapp_structure");
+       $dbh->do("drop table cgiapp_lang");
+}
