@@ -57,13 +57,13 @@ $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) value
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test2', 'en', 1, 'HOME1', 'PATH1')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test1', 'de', 0, 'HEIMAT', 'Stra&szlig;e')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test2', 'de', 1, 'HEIMAT1', 'Stra&szlig;e1')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/notfound', 'en', 2, 'HOME', 'PATH')");
-$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/notfound', 'de', 2, 'HEIMAT', 'Stra&szlig;e3')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/notfound', 'en', 4000, 'HOME', 'PATH')");
+$dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/notfound', 'de', 4000, 'HEIMAT', 'Stra&szlig;e3')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
 $dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(0,'t/templ/testL.tmpl', '2009-8-11', 'daily', 0.8)");
 $dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(1,'t/templ/testL.tmpl', '2007-8-11', 'yearly', 0.7)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(2,'t/templ/testNL.tmpl', '2009-8-11', 'never', NULL)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(4000,'t/templ/testNL.tmpl', '2009-8-11', 'never', NULL)");
 
 
 {

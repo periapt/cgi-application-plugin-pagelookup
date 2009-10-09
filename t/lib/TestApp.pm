@@ -36,7 +36,7 @@ sub cgiapp_init {
 	$params{prefix} = $self->param('prefix') if $self->param('prefix');
 	$params{remove} = $self->param('remove') if $self->param('remove');
 	if ($self->param('notfound_stuff')) {
-		$params{status_404}='notfound' ;
+		$params{status_404}=4000 ;
 		$params{msg_param}='error_param';
 	}
 	$params{xml_sitemap_base_url} = $self->param('xml_sitemap_base_url') if $self->param('xml_sitemap_base_url');

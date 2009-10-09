@@ -306,7 +306,7 @@ cannot otherwise be guessed.
 
 =item status_404
 
-This is the core id corresponding to the not found page.
+This is the internal id corresponding to the not found page.
 
 =item msg_param
 
@@ -384,6 +384,8 @@ sub pagelookup_prefix {
 =head2 pagelookup_sql 
 
 This function returns the SQL that is used to lookup a specific page.
+It takes a single argument which is usually expected to be a pageId.
+This may also be taken in the form of a HASH ref having two fields: internalId and lang.
 
 =cut
 
@@ -391,6 +393,11 @@ sub pagelookup_sql {
    my $self = shift;
    my $page_id = shift;
    my $prefix = $self->pagelookup_prefix(@_);
+   if (ref($page_id) eq "HASH") {
+	croak "internalId expected" unless exists $page_id->{internalId};
+	croak "lang expected" unless exists $page_id->{lang};
+ 	return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p JOIN ${prefix}lang l, ${prefix}structure s ON p.lang = l.lang AND p.lang = '$page_id->{lang}' AND p.internalId = s.internalId AND p.internalId = $page_id->{internalId}";
+   }
    return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p JOIN ${prefix}lang l, ${prefix}structure s ON p.lang = l.lang AND p.pageId = '$page_id' AND p.internalId = s.internalId";
 }
 
@@ -406,6 +413,8 @@ arguments overriding the default config. Then the sequence of events is as follo
 6.) Remove unwanted parameters.
 7.) Put the parameters into the template object.
 8.) Return the now partially or completely filled template object.
+
+The page id may also be taken in the form of a HASH ref having two fields: internalId and lang.
 
 =cut
 
@@ -430,6 +439,8 @@ sub pagelookup {
 
 	return undef;
    }
+
+   $page_id = $hash_ref->{pageId} if ref($page_id) eq "HASH";
 
    # Load the template
    my $template = $self->load_tmpl($hash_ref->{template}, %{$args{template_params}});
@@ -537,8 +548,8 @@ This function takes a page id which has failed a page lookup and tries to find t
 404 page. First of all it attempts to find the correct by language by assuming that if the first three 
 characters of the page id consists of two characters followed by a '/'. If this matches then the first
 two characters are taken to be the language. If that fails then the language is taken to be $self->pagelookup_default_lang.
-Then the page id of the relevant 404 page is taken to be [the language]+'/'+$self->pagelookup_404 . Having obtained a 
-a page id the page is looked up. Of course it is assumed that this page lookup cannot fail. The header  404 status is added
+Then the relevant 404 page is looked up by language and internal id. The internalId is takne to be $self->pagelookup_404 . 
+Of course it is assumed that this page lookup cannot fail. The header  404 status is added
 to the header and the original page id is inserted into the $self->pagelookup_msg_param parameter.
 If this logic does not match your URL structure you can omit exporting this function or turn notfound handling off
 and implement your own logic.
@@ -557,10 +568,7 @@ sub pagelookup_notfound {
 	$lang = $1;
    }
 
-   # Get new page id
-   my $new_page_id = "$lang/".($self->pagelookup_404(@inargs));
-
-   my $template = $self->pagelookup($new_page_id, handle_notfound=>0) || croak "failed to construct 'not found' page";
+   my $template = $self->pagelookup({lang=>$lang, internalId => $self->pagelookup_404}, handle_notfound=>0) || croak "failed to construct 'not found' page";
    $template->param( $self->pagelookup_msg_param(@inargs) => $page_id);
    $self->header_add( -status => 404 );
    return $template;

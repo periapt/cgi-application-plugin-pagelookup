@@ -52,11 +52,11 @@ for my $handle (@handles) {
        $dbh->do("create table cgiapp_lang (lang varchar(2))");
        $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test1', 'en', 0, 'HOME', 'PATH')");
        $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('test2', 'en', 1, 'HOME1', 'PATH1')");
-       $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 2, 'HOME1', 'PATH1')");
+       $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/404', 'en', 404, 'HOME1', 'PATH1')");
        $dbh->do("insert into  cgiapp_lang (lang) values('en')");
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/test.tmpl', NULL)");
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/test.tmpl', NULL)");
-       $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testN.tmpl', NULL)");
+       $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(404,'t/templ/testN.tmpl', NULL)");
 #	my $sql = "SELECT s.template, s.changefreq, p.*, l.* FROM cgiapp_pages p JOIN cgiapp_lang l, cgiapp_structure s ON p.lang = l.lang AND p.pageId = \'test1\' AND p.internalId = s.internalId";
 #	my $sql = "SELECT * FROM cgiapp_pages p JOIN cgiapp_lang l ON p.lang = l.lang, cgiapp_pages p JOIN cgiapp_structure s ON p.internalId = s.internalId WHERE p.pageId = \'test1\'";
 #       my $sth = $dbh->prepare($sql) || croak $dbh->errstr;
