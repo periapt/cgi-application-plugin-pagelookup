@@ -75,7 +75,7 @@ $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de
 $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',null, 'skip', 'Gl&uuml;cklich')");
 $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',null, 'jump', 'Himmel')");
 $dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',1, 'jump', 'Wolken')");
-$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',2, 'jump', 'Blau')");
+$dbh->do("insert into  cgiapp_values (lang, internalId, param, value) values('de',4000, 'jump', 'Blau')");
 
 	
 {
