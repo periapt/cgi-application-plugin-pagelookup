@@ -11,7 +11,7 @@ use lib qw(t/lib);
 my @handles = Test::Database->handles('SQLite');
 
 # plan the tests
-plan tests => 2 + 17 * @handles;
+plan tests => 2 + 33 * @handles;
 
 BEGIN {
         use_ok( 'HTML::Template' );
@@ -33,6 +33,9 @@ sub response_like {
         my ($header, $body) = split /\r\n\r\n/m, $output;
         $header =~ s/\r\n/|/g;
         like($header, $header_re, "$comment (header match)");
+	if ($body =~ /(\<\?xml version\=\"1\.0\" encoding\=\"UTF\-8\"\?\>.+\<\/urlset>)$/s) {
+		return $1;
+	}
         eq_or_diff($body,      $body_re,       "$comment (body match)");
 }
 
@@ -233,28 +236,28 @@ my $html=<<EOS
       <loc>http://xml/en/test1</loc>
       <lastmod>2009-8-11</lastmod>
       <changefreq>daily</changefreq>
-      <priority>0.8</priority>
+      <priority>0.800000000000000044</priority>
    </url>
 
    <url>
       <loc>http://xml/de/test1</loc>
       <lastmod>2009-8-11</lastmod>
       <changefreq>daily</changefreq>
-      <priority>0.8</priority>
+      <priority>0.800000000000000044</priority>
    </url>
 
    <url>
       <loc>http://xml/en/test2</loc>
       <lastmod>2007-8-11</lastmod>
       <changefreq>yearly</changefreq>
-      <priority>0.7</priority>
+      <priority>0.699999999999999956</priority>
    </url>
 
    <url>
       <loc>http://xml/de/test2</loc>
       <lastmod>2007-8-11</lastmod>
       <changefreq>yearly</changefreq>
-      <priority>0.7</priority>
+      <priority>0.699999999999999956</priority>
    </url>
 
 </urlset>
@@ -263,12 +266,26 @@ EOS
 
         my $app = TestApp->new(PARAMS=>$params);
         $app->query(CGI->new({'rm' => 'xml_sitemap'}));
-        response_like(
+        my $body = response_like(
                 $app,
                 qr{^Encoding: utf-8|Content-Type: text/xml; charset=utf-8$},
                 $html,
                 'TestApp, xml_sitemap'
         );
+	use XML::LibXML;
+	my $parser = XML::LibXML->new();
+	my $got = $parser->parse_string($body);
+	my $expected = $parser->parse_string($html);
+	my $xpc = XML::LibXML::XPathContext->new();
+	$xpc->registerNs('x', $got->getDocumentElement->getNamespaces->getValue);
+
+	ok(scalar(@{$xpc->findnodes('/x:urlset/x:url',$got)}) == scalar(@{$xpc->findnodes('/x:urlset/x:url',$expected)}), "number of pages");
+	for(my $i = 1; $i <= 4; $i++) {
+		ok($xpc->findnodes("/x:urlset/x:url[$i]/x:loc/text()", $got)->[0]->toString eq $xpc->findnodes("/x:urlset/x:url[$i]/x:loc/text()", $expected)->[0]->toString, "loc[$i]");
+		ok($xpc->findnodes("/x:urlset/x:url[$i]/x:changefreq/text()", $got)->[0]->toString eq $xpc->findnodes("/x:urlset/x:url[$i]/x:changefreq/text()", $expected)->[0]->toString, "changefreq[$i]");
+		ok(abs($xpc->findnodes("/x:urlset/x:url[$i]/x:priority/text()", $got)->[0]->toString - $xpc->findnodes("/x:urlset/x:url[$i]/x:priority/text()", $expected)->[0]->toString) < 0.000000001, "priority[$i]");
+		ok($xpc->findnodes("/x:urlset/x:url[$i]/x:lastmod/text()", $got)->[0]->toString eq $xpc->findnodes("/x:urlset/x:url[$i]/x:lastmod/text()", $expected)->[0]->toString, "lastmod[$i]");
+	}
 }
 
 

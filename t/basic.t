@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles('SQLite');
+my @handles = Test::Database->handles({dbd=>'SQLite'});
 
 # plan the tests
 plan tests => 2 + 9 * @handles;
@@ -57,6 +57,13 @@ for my $handle (@handles) {
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/test.tmpl', NULL)");
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/test.tmpl', NULL)");
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(2,'t/templ/testN.tmpl', NULL)");
+#	my $sql = "SELECT s.template, s.changefreq, p.*, l.* FROM cgiapp_pages p JOIN cgiapp_lang l, cgiapp_structure s ON p.lang = l.lang AND p.pageId = \'test1\' AND p.internalId = s.internalId";
+#	my $sql = "SELECT * FROM cgiapp_pages p JOIN cgiapp_lang l ON p.lang = l.lang, cgiapp_pages p JOIN cgiapp_structure s ON p.internalId = s.internalId WHERE p.pageId = \'test1\'";
+#       my $sth = $dbh->prepare($sql) || croak $dbh->errstr;
+#	$sth->execute || croak $sth->errstr;
+#	print $sth->fetchrow_hashref;
+#	$sth->finish;
+#	goto DROP;
 
        {
                 my $app = TestApp->new(QUERY => CGI->new(""));

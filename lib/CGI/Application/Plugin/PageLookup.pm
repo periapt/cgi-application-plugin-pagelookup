@@ -391,7 +391,7 @@ sub pagelookup_sql {
    my $self = shift;
    my $page_id = shift;
    my $prefix = $self->pagelookup_prefix(@_);
-   return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p, ${prefix}lang l, ${prefix}structure s WHERE p.lang = l.lang AND p.pageId = '$page_id' AND p.internalId = s.internalId";
+   return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p JOIN ${prefix}lang l, ${prefix}structure s ON p.lang = l.lang AND p.pageId = '$page_id' AND p.internalId = s.internalId";
 }
 
 =head2 pagelookup 

@@ -28,4 +28,5 @@ Revision history for CGI-Application-Plugin-PageLookup
 	Incorrect format in t/changes.t and t/manifest.t
 
 1.6	05-10-2009
-	Added github repository to META.yaml. Added prereq.t. Converted to using Test::Database.
+	Added github repository to META.yaml. Added prereq.t. Converted to using Test::Database (for SQLite only sadly). Made testing of XML sitemap
+	more robust.

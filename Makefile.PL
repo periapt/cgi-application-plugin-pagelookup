@@ -23,7 +23,8 @@ my %conf = (
 	'UNIVERSAL::require'=>0,
 	'Test::Differences' => 0,
         'Test::More' => 0,
-	'Test::Database' => 0
+	'Test::Database' => 0,
+	'XML::LibXML'=>0
     },
     META_MERGE    => {
         resources => {
