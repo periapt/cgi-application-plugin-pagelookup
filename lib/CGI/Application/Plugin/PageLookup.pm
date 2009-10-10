@@ -548,7 +548,7 @@ This function takes a page id which has failed a page lookup and tries to find t
 404 page. First of all it attempts to find the correct by language by assuming that if the first three 
 characters of the page id consists of two characters followed by a '/'. If this matches then the first
 two characters are taken to be the language. If that fails then the language is taken to be $self->pagelookup_default_lang.
-Then the relevant 404 page is looked up by language and internal id. The internalId is takne to be $self->pagelookup_404 . 
+Then the relevant 404 page is looked up by language and internal id. The internalId is taken to be $self->pagelookup_404 . 
 Of course it is assumed that this page lookup cannot fail. The header  404 status is added
 to the header and the original page id is inserted into the $self->pagelookup_msg_param parameter.
 If this logic does not match your URL structure you can omit exporting this function or turn notfound handling off
