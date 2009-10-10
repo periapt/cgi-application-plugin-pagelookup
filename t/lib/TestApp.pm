@@ -35,6 +35,7 @@ sub cgiapp_init {
 	my %params = (remove=>['lang', 'template', 'pageId', 'internalId', 'changefreq']);
 	$params{prefix} = $self->param('prefix') if $self->param('prefix');
 	$params{remove} = $self->param('remove') if $self->param('remove');
+	$params{msg_param} = $self->param('msg_param') if $self->param('msg_param');
 	if ($self->param('notfound_stuff')) {
 		$params{status_404}=4000 ;
 		$params{msg_param}='error_param';
