@@ -396,9 +396,9 @@ sub pagelookup_sql {
    if (ref($page_id) eq "HASH") {
 	croak "internalId expected" unless exists $page_id->{internalId};
 	croak "lang expected" unless exists $page_id->{lang};
- 	return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p JOIN ${prefix}lang l, ${prefix}structure s ON p.lang = l.lang AND p.lang = '$page_id->{lang}' AND p.internalId = s.internalId AND p.internalId = $page_id->{internalId}";
+ 	return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p, ${prefix}lang l, ${prefix}structure s WHERE p.lang = l.lang AND p.lang = '$page_id->{lang}' AND p.internalId = s.internalId AND p.internalId = $page_id->{internalId}";
    }
-   return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p JOIN ${prefix}lang l, ${prefix}structure s ON p.lang = l.lang AND p.pageId = '$page_id' AND p.internalId = s.internalId";
+   return "SELECT s.template, s.changefreq, p.*, l.* FROM ${prefix}pages p, ${prefix}lang l, ${prefix}structure s WHERE p.lang = l.lang AND p.pageId = '$page_id' AND p.internalId = s.internalId";
 }
 
 =head2 pagelookup 
@@ -657,6 +657,11 @@ Nicholas Bamber, C<< <nicholas at periapt.co.uk> >>
 
 =head1 BUGS
 
+Currently errors are not trapped early enough and hence error messages are less informative than they might be.
+
+Also we are working on validating the code agaisnt more L<DBI> drivers. Currently mysql and SQLite are known to work.
+The SQL is not ANSI standard and that is one possible change.
+
 Please report any bugs or feature requests to C<bug-cgi-application-plugin-pagelookup at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CGI-Application-Plugin-PageLookup>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
@@ -693,7 +698,8 @@ L<http://search.cpan.org/dist/CGI-Application-Plugin-PageLookup/>
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks to JavaFan for suggesting the use of L<Test::Database>.
+Thanks to JavaFan for suggesting the use of L<Test::Database>. Thanks to  Philippe Bruhat
+for help with getting Test::Database to work more smoothly.
 
 =head1 COPYRIGHT & LICENSE
 

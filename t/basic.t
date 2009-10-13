@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles({dbd=>'SQLite'});
+my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
 plan tests => 2 + 9 * @handles;
@@ -42,9 +42,7 @@ for my $handle (@handles) {
 
        # let $handle do the connect()
        my $dbh = $handle->dbh();
-       if ($ENV{TEST_DATABASE_DROP}) {
-          goto DROP;
-       }
+       drop_tables($dbh) if $ENV{DROP_TABLES};
        $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
 
        $dbh->do("create table cgiapp_pages (pageId varchar(255), lang varchar(2), internalId int, home TEXT, path TEXT)");
@@ -57,13 +55,6 @@ for my $handle (@handles) {
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(0,'t/templ/test.tmpl', NULL)");
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(1,'t/templ/test.tmpl', NULL)");
        $dbh->do("insert into  cgiapp_structure(internalId, template, changefreq) values(404,'t/templ/testN.tmpl', NULL)");
-#	my $sql = "SELECT s.template, s.changefreq, p.*, l.* FROM cgiapp_pages p JOIN cgiapp_lang l, cgiapp_structure s ON p.lang = l.lang AND p.pageId = \'test1\' AND p.internalId = s.internalId";
-#	my $sql = "SELECT * FROM cgiapp_pages p JOIN cgiapp_lang l ON p.lang = l.lang, cgiapp_pages p JOIN cgiapp_structure s ON p.internalId = s.internalId WHERE p.pageId = \'test1\'";
-#       my $sth = $dbh->prepare($sql) || croak $dbh->errstr;
-#	$sth->execute || croak $sth->errstr;
-#	print $sth->fetchrow_hashref;
-#	$sth->finish;
-#	goto DROP;
 
        {
                 my $app = TestApp->new(QUERY => CGI->new(""));
@@ -151,9 +142,13 @@ EOS
                 'TestApp, notfound'
         );
 }
+	drop_tables($dbh);
 
+}
 
-DROP:  $dbh->do("drop table cgiapp_pages");
+sub drop_tables {
+	my $dbh = shift;
+       $dbh->do("drop table cgiapp_pages");
        $dbh->do("drop table cgiapp_structure");
        $dbh->do("drop table cgiapp_lang");
 }

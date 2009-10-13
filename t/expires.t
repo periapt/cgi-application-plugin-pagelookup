@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles('SQLite');
+my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
 plan tests => 2 + 33 * @handles;
@@ -45,14 +45,12 @@ for my $handle (@handles) {
 
        # let $handle do the connect()
        my $dbh = $handle->dbh();
-       if ($ENV{TEST_DATABASE_DROP}) {
-          goto DROP;
-       }
+       drop_tables($dbh) if $ENV{DROP_TABLES};
        $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
 
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
-$dbh->do("create table cgiapp_structure (internalId, template, lastmod, changefreq, priority)");
-$dbh->do("create table cgiapp_lang (lang, collation)");
+       $dbh->do("create table cgiapp_pages (pageId varchar(255), lang varchar(2), internalId int, home TEXT, path TEXT)");
+       $dbh->do("create table cgiapp_structure (internalId int, template varchar(20), lastmod DATE, changefreq varchar(20), priority decimal(3,1))");
+       $dbh->do("create table cgiapp_lang (lang varchar(2), collation varchar(2))");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test1', 'en', 0, 'HOME', 'PATH')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test2', 'en', 1, 'HOME1', 'PATH1')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/test1', 'de', 0, 'HEIMAT', 'Stra&szlig;e')");
@@ -61,9 +59,9 @@ $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) value
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('de/notfound', 'de', 4000, 'HEIMAT', 'Stra&szlig;e3')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('en','GB')");
 $dbh->do("insert into  cgiapp_lang (lang, collation) values('de','DE')");
-$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(0,'t/templ/testL.tmpl', '2009-8-11', 'daily', 0.8)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(1,'t/templ/testL.tmpl', '2007-8-11', 'yearly', 0.7)");
-$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(4000,'t/templ/testNL.tmpl', '2009-8-11', 'never', NULL)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(0,'t/templ/testL.tmpl', '2009-08-11', 'daily', 0.8)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(1,'t/templ/testL.tmpl', '2007-08-11', 'yearly', 0.7)");
+$dbh->do("insert into  cgiapp_structure(internalId, template, lastmod, changefreq, priority) values(4000,'t/templ/testNL.tmpl', '2009-08-11', 'never', NULL)");
 
 
 {
@@ -234,28 +232,28 @@ my $html=<<EOS
 
    <url>
       <loc>http://xml/en/test1</loc>
-      <lastmod>2009-8-11</lastmod>
+      <lastmod>2009-08-11</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.800000000000000044</priority>
    </url>
 
    <url>
       <loc>http://xml/de/test1</loc>
-      <lastmod>2009-8-11</lastmod>
+      <lastmod>2009-08-11</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.800000000000000044</priority>
    </url>
 
    <url>
       <loc>http://xml/en/test2</loc>
-      <lastmod>2007-8-11</lastmod>
+      <lastmod>2007-08-11</lastmod>
       <changefreq>yearly</changefreq>
       <priority>0.699999999999999956</priority>
    </url>
 
    <url>
       <loc>http://xml/de/test2</loc>
-      <lastmod>2007-8-11</lastmod>
+      <lastmod>2007-08-11</lastmod>
       <changefreq>yearly</changefreq>
       <priority>0.699999999999999956</priority>
    </url>
@@ -287,9 +285,12 @@ EOS
 		ok($xpc->findnodes("/x:urlset/x:url[$i]/x:lastmod/text()", $got)->[0]->toString eq $xpc->findnodes("/x:urlset/x:url[$i]/x:lastmod/text()", $expected)->[0]->toString, "lastmod[$i]");
 	}
 }
+	drop_tables($dbh);
+}
 
-
-DROP:  $dbh->do("drop table cgiapp_pages");
+sub drop_tables {
+	my $dbh=shift;
+	$dbh->do("drop table cgiapp_pages");
        $dbh->do("drop table cgiapp_structure");
        $dbh->do("drop table cgiapp_lang");
 }

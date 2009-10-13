@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles('SQLite');
+my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
 plan tests => 2 + 9 * @handles;
@@ -47,14 +47,13 @@ for my $handle (@handles) {
 
        # let $handle do the connect()
        my $dbh = $handle->dbh();
-       if ($ENV{TEST_DATABASE_DROP}) {
-          goto DROP;
-       }
+       drop_tables($dbh) if $ENV{DROP_TABLES};
        $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
 
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId)");
-$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
-$dbh->do("create table cgiapp_lang (lang, collation, english, german, french, first, second, third)");
+       $dbh->do("create table cgiapp_pages (pageId varchar(255), lang varchar(2), internalId int)");
+       $dbh->do("create table cgiapp_structure (internalId int, template varchar(20), changefreq varchar(20))");
+       $dbh->do("create table cgiapp_lang (lang varchar(2), collation varchar(2), english TEXT, german TEXT, french TEXT, first TEXT, second TEXT, third TEXT)");
+ 
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/href', 'en', 0)");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/first', 'en', 1)");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/second', 'en', 2)");
@@ -172,12 +171,15 @@ EOS
                 $html,
                 'TestApp, French'
         );
+	
+}
+	drop_tables($dbh);
+
 }
 
-
-DROP:  $dbh->do("drop table cgiapp_pages");
+sub drop_tables {
+	my $dbh = shift;
+	$dbh->do("drop table cgiapp_pages");
        $dbh->do("drop table cgiapp_structure");
        $dbh->do("drop table cgiapp_lang");
 }
-
-
