@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles('SQLite');
+my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
 plan tests => 2 + 9 * @handles;
@@ -52,15 +52,13 @@ for my $handle (@handles) {
 
        # let $handle do the connect()
        my $dbh = $handle->dbh();
-       if ($ENV{TEST_DATABASE_DROP}) {
-          goto DROP;
-       }
+       drop_tables($dbh) if $ENV{DROP_TABLES};
        $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
 
-
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId, home, path)");
-$dbh->do("create table cgiapp_structure (internalId, template, lastmod, changefreq, priority)");
-$dbh->do("create table cgiapp_lang (lang, collation)");
+       $dbh->do("create table cgiapp_pages (pageId varchar(255), lang varchar(2), internalId int, home TEXT, path TEXT)");
+       $dbh->do("create table cgiapp_structure (internalId int, template varchar(20), lastmod DATE, changefreq varchar(20), priority decimal(3,1))");
+       $dbh->do("create table cgiapp_lang (lang varchar(2), collation varchar(2))");
+ 
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test1', 'en', 0, 'HOME', 'PATH')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test2', 'en', 1, 'HOME1', 'PATH1')");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId, home, path) values('en/test3', 'en', 2, 'HOME2', 'PATH2')");
@@ -162,9 +160,12 @@ EOS
                 'TestApp, notfound'
         );
 }
+        drop_tables($dbh);
+}
 
-
-DROP:  $dbh->do("drop table cgiapp_pages");
+sub drop_tables {
+	my $dbh = shift;
+	$dbh->do("drop table cgiapp_pages");
        $dbh->do("drop table cgiapp_structure");
        $dbh->do("drop table cgiapp_lang");
 }

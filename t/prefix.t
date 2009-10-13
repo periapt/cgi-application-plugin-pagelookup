@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles('SQLite');
+my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
 plan tests => 2 + 7 * @handles;
@@ -42,9 +42,7 @@ for my $handle (@handles) {
 
        # let $handle do the connect()
        my $dbh = $handle->dbh();
-       if ($ENV{TEST_DATABASE_DROP}) {
-          goto DROP;
-       }
+       drop_tables($dbh) if $ENV{DROP_TABLES};
        $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
 
        $dbh->do("create table blah_pages (pageId, lang, internalId, home, path)");
@@ -118,9 +116,13 @@ EOS
                 'TestApp, test2'
         );
 }
+        drop_tables($dbh);
+}
 
+sub drop_tables {
+	my $dbh = shift;
 
-DROP:  $dbh->do("drop table blah_pages");
+	$dbh->do("drop table blah_pages");
        $dbh->do("drop table blah_structure");
        $dbh->do("drop table blah_lang");
 }
