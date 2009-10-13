@@ -8,7 +8,7 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles('SQLite');
+my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
 plan tests => 2 + 11 * @handles;
@@ -47,16 +47,15 @@ for my $handle (@handles) {
 
        # let $handle do the connect()
        my $dbh = $handle->dbh();
-       if ($ENV{TEST_DATABASE_DROP}) {
-          goto DROP;
-       }
+       drop_tables($dbh) if $ENV{DROP_TABLES};
        $params->{'::Plugin::DBH::dbh_config'}=[$dbh];
 
-$dbh->do("create table cgiapp_pages (pageId, lang, internalId)");
-$dbh->do("create table cgiapp_structure (internalId, template, changefreq)");
-$dbh->do("create table cgiapp_lang (lang, collation)");
-$dbh->do("create table cgiapp_values (lang, internalId, param, value)");
-$dbh->do("create table cgiapp_loops (lang, internalId, loopName, lineage, rank, param, value)");
+       $dbh->do("create table cgiapp_pages (pageId varchar(255), lang varchar(2), internalId int)");
+       $dbh->do("create table cgiapp_structure (internalId int, template varchar(20), changefreq varchar(20))");
+       $dbh->do("create table cgiapp_lang (lang varchar(2), collation varchar(2))");
+ 
+	$dbh->do("create table cgiapp_values (lang varchar(2), internalId int, param varchar(20), value TEXT)");
+	$dbh->do("create table cgiapp_loops (lang varchar(2), internalId int, loopName varchar(20), lineage varchar(255), rank int, param varchar(20), value TEXT)");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop1', 'en', 0)");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop2', 'en', 1)");
 $dbh->do("insert into  cgiapp_pages (pageId, lang, internalId) values('en/loop3', 'en', 2)");
@@ -359,12 +358,15 @@ EOS
         );
 }
 
+	drop_tables($dbh);
+}
 
-DROP:  $dbh->do("drop table cgiapp_pages");
+sub drop_tables {
+	my $dbh = shift;
+	$dbh->do("drop table cgiapp_pages");
        $dbh->do("drop table cgiapp_structure");
        $dbh->do("drop table cgiapp_lang");
        $dbh->do("drop table cgiapp_values");
        $dbh->do("drop table cgiapp_loops");
 }
-
 
