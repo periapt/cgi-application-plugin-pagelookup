@@ -659,7 +659,7 @@ Nicholas Bamber, C<< <nicholas at periapt.co.uk> >>
 
 Currently errors are not trapped early enough and hence error messages are less informative than they might be.
 
-Also we are working on validating the code agaisnt more L<DBI> drivers. Currently mysql and SQLite are known to work.
+Also we are working on validating the code against more L<DBI> drivers. Currently mysql and SQLite are known to work.
 The SQL is not ANSI standard and that is one possible change.
 
 Please report any bugs or feature requests to C<bug-cgi-application-plugin-pagelookup at rt.cpan.org>, or through
