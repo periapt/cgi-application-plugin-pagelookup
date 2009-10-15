@@ -34,11 +34,11 @@ CGI::Application::Plugin::PageLookup - Database driven model framework for CGI::
 
 =head1 VERSION
 
-Version 1.6
+Version 1.7
 
 =cut
 
-our $VERSION = '1.6';
+our $VERSION = '1.7';
 
 =head1 DESCRIPTION
 
@@ -660,7 +660,9 @@ Nicholas Bamber, C<< <nicholas at periapt.co.uk> >>
 Currently errors are not trapped early enough and hence error messages are less informative than they might be.
 
 Also we are working on validating the code against more L<DBI> drivers. Currently mysql and SQLite are known to work.
-The SQL is not ANSI standard and that is one possible change.
+It is known to be incompatible with postgres, which should be fixed in the next release. This may entail schema changes.
+It is also known to be in incompatible with L<DBD::DBM>, apparently on account of a join across three tables.
+The SQL is not ANSI standard and that is one possible change. Another approach may be to make the schema configurable.
 
 Please report any bugs or feature requests to C<bug-cgi-application-plugin-pagelookup at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CGI-Application-Plugin-PageLookup>.  I will be notified, and then you'll
