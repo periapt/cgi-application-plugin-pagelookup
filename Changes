@@ -30,3 +30,6 @@ Revision history for CGI-Application-Plugin-PageLookup
 1.6	05-10-2009
 	Added github repository to META.yaml. Added prereq.t. Converted to using Test::Database (for SQLite only sadly). Made testing of XML sitemap
 	more robust. Made notfound handling not force the URLs and pagelookup can now handle HASH based pageIds.
+
+1.7	17-10-2009
+	Fixed test scripts not declaring plan first.

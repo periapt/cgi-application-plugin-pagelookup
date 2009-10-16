@@ -8,13 +8,14 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
-
-# plan the tests
-plan tests => 2 + 7 * @handles;
+my @handles;
 
 BEGIN {
-        use_ok( 'HTML::Template' );
+        @handles  = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
+
+        # plan the tests
+        plan tests => 1 + 7 * @handles;
+
         use_ok( 'CGI::Application::Plugin::PageLookup' );
 }
 
