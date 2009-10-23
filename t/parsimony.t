@@ -11,12 +11,7 @@ use lib qw(t/lib);
 my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 # plan the tests
-plan tests => 2 + 9 * @handles;
-
-BEGIN {
-        use_ok( 'HTML::Template' );
-        use_ok( 'CGI::Application::Plugin::PageLookup' );
-}
+plan tests => 9 * @handles;
 
 use DBI;
 use CGI;
