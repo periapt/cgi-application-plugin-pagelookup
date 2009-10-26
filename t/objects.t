@@ -8,10 +8,14 @@ use Test::Differences;
 use lib qw(t/lib);
 
 # get all available handles
-my @handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
+my @handles;
 
-# plan the tests
-plan tests => 15 * @handles;
+BEGIN {
+	@handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
+
+	# plan the tests
+	plan tests => 15 * @handles;
+}
 
 use DBI;
 use CGI;
