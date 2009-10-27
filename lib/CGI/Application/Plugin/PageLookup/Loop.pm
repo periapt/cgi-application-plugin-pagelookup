@@ -9,11 +9,11 @@ CGI::Application::Plugin::PageLookup::Loop - Manage list structures in a website
 
 =head1 VERSION
 
-Version 1.6_3
+Version 1.6_4
 
 =cut
 
-our $VERSION = '1.6_3';
+our $VERSION = '1.6_4';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION

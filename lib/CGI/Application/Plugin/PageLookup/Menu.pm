@@ -10,11 +10,11 @@ CGI::Application::Plugin::PageLookup::Menu - Support for consistent menus across
 
 =head1 VERSION
 
-Version 1.6_3
+Version 1.6_4
 
 =cut
 
-our $VERSION = '1.6_3';
+our $VERSION = '1.6_4';
 our $AUTOLOAD;
 
 =head1 DESCRIPTION
@@ -152,24 +152,40 @@ sub new {
 
 This function is specified in the template where additional columns are specified. 
 If no arguments are specified only the 'pageId' column is returned for each menu item.
-Additional arguments should be specified as a single comma separated string.
+Additional arguments should be specified either as a single comma separated string (deprecated)
+or as multiple arguments.
 
 =cut
 
 sub structure {
 	my $self = shift;
-	my $param = shift || "";
+	my @params = @_;
+	my $join_separator = "','";
+	if (scalar(@params) == 1) {
+		# legacy case
+		@params = split /,/, $params[0];
+		$join_separator = ",";
+	}
+	return $self->__structure(\@params, "", [$self->{name}], $join_separator);
+}
+
+sub __structure {
+	my $self = shift;
+	my @params = @{shift || []};
 
         # $dlineage are the "breadcrumbs" required to navigate our way through the database
 	# and corresponds to the 'lineage' column on the cgiapp_structure table.
 	my $dlineage = shift;
-	$dlineage = "" unless defined $dlineage;
+	croak "database lineage missing" unless defined $dlineage;
 
 	# $tlineage are the "breadcrumbs" required to navigate our way through the HTML::Template structure.
 	# It corresponds to the ARRAY ref used in $template->query(loop=> [....]) only that the
 	# post "dot" string of the final array member (aka structure('$param')) is missing.
 	my $tlineage = shift;
-	$tlineage = [$self->{name}] unless defined $tlineage;
+	croak "template lineage missing" unless defined $tlineage;
+
+	# $join_separator shows how we join parameters together again.
+	my $join_separator = shift;
 
         my $prefix = $self->{cgiapp}->pagelookup_prefix(%{$self->{config}});
         my $page_id = $self->{page_id};
@@ -181,11 +197,11 @@ sub structure {
 	$self->{work_to_be_done} = [] unless exists $self->{work_to_be_done};
 
 	# generate SQL: get menu structure but optionally pull extra columns from cgiapp_pages
-	my @params = split /,/ , $param;
+	my @params_sql;
 	foreach my $p (@params) {
-		$p = ", p2.$p";
+		push @params_sql, ", p2.$p";
 	}
-	my $param_sql = join "", @params;
+	my $param_sql = join "", @params_sql;
         my $sql = "SELECT s.rank, p2.pageId $param_sql FROM ${prefix}structure s, ${prefix}pages p2, ${prefix}pages p1 WHERE p1.lang = p2.lang AND s.internalId = p2.internalId AND p1.pageId = '$page_id' AND s.lineage = '$dlineage' AND s.priority IS NOT NULL ORDER BY s.rank ASC";
 
 	# First one pass over the loop
@@ -196,7 +212,7 @@ sub structure {
 		my $current_rank = delete $hash_ref->{rank};
 
 		# Now we need to add in any loop variables
-		$self->__populate_lower_loops($dlineage, $tlineage, $hash_ref, $current_rank, $param);
+		$self->__populate_lower_loops($dlineage, $tlineage, $hash_ref, $current_rank, \@params, $join_separator);
 
 		# We are finally ready to get this structure out of the door
 		push @loop, $hash_ref;
@@ -227,12 +243,17 @@ sub __populate_lower_loops {
 	my $current_row = shift;
 	my $current_rank = shift;
 	my $param = shift;
+	my $join_separator = shift;
 	my $comma = ',';
         my $new_dlineage = join $comma , (split /,/, $dlineage), $current_rank;
         my @new_tlineage = @$tlineage;
         my $thead = pop @new_tlineage;
 	$thead .= ".structure";
-	$thead .= "('$param')" if $param;
+	if ($param) {
+		$thead .= "('";
+		$thead .= join $join_separator, @$param;
+		$thead .= "')";
+	}
         push @new_tlineage, $thead;
         my @new_vars = $self->{template}->query(loop=>\@new_tlineage);
         foreach my $var (@new_vars) {
@@ -252,7 +273,7 @@ sub __populate_lower_loops {
                 $current_row->{structure} = $new_loop;
                 my $new_tlineage = [@new_tlineage, $one];
                 push @{$self->{work_to_be_done}}, sub {
-                	push @$new_loop,  @{$self->structure($param, $new_dlineage, $new_tlineage)};
+                	push @$new_loop,  @{$self->__structure($param, $new_dlineage, $new_tlineage, $join_separator)};
                 };
         }
 	return;
