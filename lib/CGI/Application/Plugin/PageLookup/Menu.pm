@@ -15,7 +15,6 @@ Version 1.6_4
 =cut
 
 our $VERSION = '1.6_4';
-our $AUTOLOAD;
 
 =head1 DESCRIPTION
 
@@ -273,7 +272,8 @@ sub __populate_lower_loops {
 =head2 slice
 
 This function is a variant of the C<< structure >> function, which allows one to specify a part of the menu.
-The first argument is the database lineage.
+The first argument is the database lineage which is a string consisting of comma separated numbers. The other arguments 
+are as described under C<< structure >>. The slice function can only be used in the topmost TMPL_LOOP of a template.
 
 =cut
 
@@ -303,10 +303,6 @@ Nicholas Bamber, C<< <nicholas at periapt.co.uk> >>
 Please report any bugs or feature requests to C<bug-cgi-application-plugin-pagelookup at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CGI-Application-Plugin-PageLookup>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-=head2 AUTOLOAD
-
-AUTOLOAD is quite a fraught subject. There is probably no perfect solution. See http://www.perlmonks.org/?node_id=342804 for a sample of the issues.
 
 =head1 SUPPORT
 

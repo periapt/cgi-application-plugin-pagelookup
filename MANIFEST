@@ -1,3 +1,7 @@
+t/mixnmatch.t
+t/submenu.t
+t/templ/mix.tmpl
+t/templ/dog.tmpl
 Changes
 lib/CGI/Application/Plugin/PageLookup.pm
 lib/CGI/Application/Plugin/PageLookup/Href.pm
