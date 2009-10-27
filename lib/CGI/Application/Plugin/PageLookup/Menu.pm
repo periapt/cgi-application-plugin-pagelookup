@@ -160,13 +160,17 @@ or as multiple arguments.
 sub structure {
 	my $self = shift;
 	my @params = @_;
-	my $join_separator = "','";
+	my $template = "$self->{name}.structure('";
 	if (scalar(@params) == 1) {
 		# legacy case
+		$template .= "$params[0]')";
 		@params = split /,/, $params[0];
-		$join_separator = ",";
 	}
-	return $self->__structure(\@params, "", [$self->{name}], $join_separator);
+	else {
+		$template .= join "','", @params;
+		$template .= "')";
+	}
+	return $self->__structure(\@params, "", [$template]);
 }
 
 sub __structure {
@@ -179,13 +183,9 @@ sub __structure {
 	croak "database lineage missing" unless defined $dlineage;
 
 	# $tlineage are the "breadcrumbs" required to navigate our way through the HTML::Template structure.
-	# It corresponds to the ARRAY ref used in $template->query(loop=> [....]) only that the
-	# post "dot" string of the final array member (aka structure('$param')) is missing.
+	# It corresponds to the ARRAY ref used in $template->query(loop=> [....]).
 	my $tlineage = shift;
 	croak "template lineage missing" unless defined $tlineage;
-
-	# $join_separator shows how we join parameters together again.
-	my $join_separator = shift;
 
         my $prefix = $self->{cgiapp}->pagelookup_prefix(%{$self->{config}});
         my $page_id = $self->{page_id};
@@ -212,7 +212,7 @@ sub __structure {
 		my $current_rank = delete $hash_ref->{rank};
 
 		# Now we need to add in any loop variables
-		$self->__populate_lower_loops($dlineage, $tlineage, $hash_ref, $current_rank, \@params, $join_separator);
+		$self->__populate_lower_loops($dlineage, $tlineage, $hash_ref, $current_rank, \@params);
 
 		# We are finally ready to get this structure out of the door
 		push @loop, $hash_ref;
@@ -243,18 +243,9 @@ sub __populate_lower_loops {
 	my $current_row = shift;
 	my $current_rank = shift;
 	my $param = shift;
-	my $join_separator = shift;
 	my $comma = ',';
         my $new_dlineage = join $comma , (split /,/, $dlineage), $current_rank;
         my @new_tlineage = @$tlineage;
-        my $thead = pop @new_tlineage;
-	$thead .= ".structure";
-	if ($param) {
-		$thead .= "('";
-		$thead .= join $join_separator, @$param;
-		$thead .= "')";
-	}
-        push @new_tlineage, $thead;
         my @new_vars = $self->{template}->query(loop=>\@new_tlineage);
         foreach my $var (@new_vars) {
 
@@ -271,12 +262,36 @@ sub __populate_lower_loops {
                 # before populating this one
                 my $new_loop = [];
                 $current_row->{structure} = $new_loop;
-                my $new_tlineage = [@new_tlineage, $one];
+                my $new_tlineage = [@new_tlineage, $var];
                 push @{$self->{work_to_be_done}}, sub {
-                	push @$new_loop,  @{$self->__structure($param, $new_dlineage, $new_tlineage, $join_separator)};
+                	push @$new_loop,  @{$self->__structure($param, $new_dlineage, $new_tlineage)};
                 };
         }
 	return;
+}
+
+=head2 slice
+
+This function is a variant of the C<< structure >> function, which allows one to specify a part of the menu.
+The first argument is the database lineage.
+
+=cut
+
+sub slice {
+        my $self = shift;
+        my $dlineage = shift;
+        my $template = "$self->{name}.slice('$dlineage','";
+	my @params = @_;
+        if (scalar(@params) == 1) {
+                # legacy case
+                $template .= "$params[0]')";
+                @params = split /,/, $params[0];
+        }
+        else {
+                $template .= join "','", @params;
+                $template .= "')";
+        }
+        return $self->__structure(\@params, $dlineage, [$template]);
 }
 
 =head1 AUTHOR
