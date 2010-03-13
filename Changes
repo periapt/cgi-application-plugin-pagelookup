@@ -36,3 +36,6 @@ Revision history for CGI-Application-Plugin-PageLookup
 
 1.6_4   27-10-2009
 	Fixed issues with menu and added slice function and other tests.
+
+1.6_5   29-10-2009
+	Made sure all tests generate at least one test.
