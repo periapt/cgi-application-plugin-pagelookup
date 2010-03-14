@@ -10,11 +10,11 @@ CGI::Application::Plugin::PageLookup::Menu - Support for consistent menus across
 
 =head1 VERSION
 
-Version 1.6_5
+Version 1.7
 
 =cut
 
-our $VERSION = '1.6_5';
+our $VERSION = '1.7';
 
 =head1 DESCRIPTION
 

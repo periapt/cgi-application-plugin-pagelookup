@@ -8,6 +8,7 @@ lib/CGI/Application/Plugin/PageLookup/Href.pm
 lib/CGI/Application/Plugin/PageLookup/Loop.pm
 lib/CGI/Application/Plugin/PageLookup/Menu.pm
 lib/CGI/Application/Plugin/PageLookup/Value.pm
+Build.PL
 Makefile.PL
 MANIFEST
 README
@@ -49,3 +50,4 @@ t/templ/testN.tmpl
 t/templ/testNL.tmpl
 t/templ/testNLO.tmpl
 t/values.t
+META.yml

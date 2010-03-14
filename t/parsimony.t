@@ -13,9 +13,7 @@ BEGIN {
 	@handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 	# plan the tests
-	plan tests => 1+9 * @handles;
-	use_ok( 'CGI::Application::Plugin::PageLookup' );
-
+	plan tests => 9 * @handles;
 }
 
 use DBI;
