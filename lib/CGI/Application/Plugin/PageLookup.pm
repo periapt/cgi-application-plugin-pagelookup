@@ -34,11 +34,11 @@ CGI::Application::Plugin::PageLookup - Database driven model framework for CGI::
 
 =head1 VERSION
 
-Version 1.7
+Version 1.8
 
 =cut
 
-our $VERSION = '1.7';
+our $VERSION = '1.8';
 
 =head1 DESCRIPTION
 

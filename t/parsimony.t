@@ -9,11 +9,14 @@ use lib qw(t/lib);
 
 # get all available handles
 my @handles;
+ok(1); # just keep the test suite happy if Test::Database does nothing
+
+
 BEGIN {
 	@handles = Test::Database->handles({dbd=>'SQLite'},{dbd=>'mysql'});
 
 	# plan the tests
-	plan tests => 9 * @handles;
+	plan tests => 1+9 * @handles;
 }
 
 use DBI;

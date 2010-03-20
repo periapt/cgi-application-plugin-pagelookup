@@ -33,5 +33,8 @@ Revision history for CGI-Application-Plugin-PageLookup
 
 1.7	14-03-2010
 	Fixed test scripts not declaring plan first. Fixed issues with menu and added slice function and other tests.
-	Made sure all tests generate at least one test. Switched to Build.PL.
+	Switched to Build.PL.
+
+1.8 	20-3-2010
+	Made sure all tests generate at least one test. 
 
