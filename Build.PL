@@ -24,7 +24,7 @@ Module::Build->new(
     },
     meta_merge => {
         resources=> {
-            repository => 'http://github.com/periapt/cgi-application-plugin-pagelookup/tree',
+            repository => 'http://github.com/periapt/cgi-application-plugin-pagelookup',
         },
         keywords => ['cgiapp','Titanium','framework','sitemap'],
     },
